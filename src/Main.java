@@ -37,7 +37,7 @@ public class Main {
                         }
                     }
                     board = new Board(newBoard);
-                    System.out.println(board);
+                    System.out.println(board);//call Search functions from this line
                     currline = fileScan.nextLine();
                 }
             }
