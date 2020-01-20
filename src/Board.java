@@ -19,4 +19,12 @@ public class Board {
         }
         return toReturn;
     }
+
+    public char getPosition(int row, int col){
+        return layout[row][col];
+    }
+
+    public void updatePosition(char newChar, int row, int col){
+        layout[row][col] = newChar;
+    }
 }

@@ -13,7 +13,6 @@ public class Main {
             Scanner fileScan = new Scanner(new FileReader(new File(args[0])));
             boolean isStart = true;
             String currline;
-            String fullBoard = "";
             String[] dimensions;
             currline = fileScan.nextLine();
             while (fileScan.hasNext()) {
