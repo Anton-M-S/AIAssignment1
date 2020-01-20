@@ -27,4 +27,19 @@ public class Board {
     public void updatePosition(char newChar, int row, int col){
         layout[row][col] = newChar;
     }
+
+    public boolean isBoardValid(){
+
+        return false;
+    }
+
+    public boolean areBulbsValid(Board board){
+
+        return false;
+    }
+
+    public boolean areWallsValid(Board board){
+
+        return false;
+    }
 }
