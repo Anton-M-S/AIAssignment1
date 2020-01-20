@@ -28,6 +28,7 @@ public class Main {
 
                     } else {
                         isStart = true;
+                        currline = fileScan.nextLine();
                     }
                 }else {
                     for (int i = 0; i < x; i++) {
