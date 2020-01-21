@@ -41,9 +41,13 @@ public class Board {
         Space currSpace;
         while (valid && counter<bulbSpaces.size()){
             currSpace = bulbSpaces.get(counter);
-
+            valid = this.isRowValid(currSpace.getX(), currSpace.getY());
+            if (valid) {
+                valid = this.isColValid(currSpace.getX(), currSpace.getY());
+            }
+            counter +=1;
         }
-        return false;
+        return valid;
     }
 
     public boolean areWallsValid(Board board, ArrayList<Space> wallSpaces){
@@ -78,4 +82,33 @@ public class Board {
         }
         return valid;
     }
+
+    public boolean isColValid(int rowNum, int colNum){
+        boolean valid = true;
+        boolean noWall = true;
+        int counter = rowNum-1;
+        while (valid && noWall && counter >= 0){
+            if (this.getPosition(counter, rowNum) == 'b'){
+                valid = false;
+            }else {
+                if (Character.isDigit(this.getPosition(counter, colNum))){
+                    noWall = false;
+                }
+            }
+            counter -= 1;
+        }
+        counter = rowNum+1;
+        while (valid && noWall && counter < this.layout.length){
+            if (this.getPosition(rowNum,counter) == 'b'){
+                valid = false;
+            }else {
+                if (Character.isDigit(this.getPosition(counter, rowNum))){
+                    noWall = false;
+                }
+            }
+            counter+=1;
+        }
+        return valid;
+    }
+
 }
