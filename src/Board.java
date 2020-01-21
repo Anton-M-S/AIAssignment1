@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Board {
     private char[][] layout;
     public Board(char[][] newBoard){
@@ -33,13 +35,47 @@ public class Board {
         return false;
     }
 
-    public boolean areBulbsValid(Board board){
+    public boolean areBulbsValid(ArrayList<Space> bulbSpaces){
+        boolean valid = true;
+        int counter = 0;
+        Space currSpace;
+        while (valid && counter<bulbSpaces.size()){
+            currSpace = bulbSpaces.get(counter);
+
+        }
+        return false;
+    }
+
+    public boolean areWallsValid(Board board, ArrayList<Space> wallSpaces){
 
         return false;
     }
 
-    public boolean areWallsValid(Board board){
-
-        return false;
+    public boolean isRowValid(int rowNum, int colNum){
+        boolean valid = true;
+        boolean noWall = true;
+        int counter = colNum-1;
+        while (valid && noWall && counter >= 0){
+            if (this.getPosition(rowNum, counter) == 'b'){
+                valid = false;
+            }else {
+                if (Character.isDigit(this.getPosition(rowNum, counter))){
+                    noWall = false;
+                }
+            }
+            counter -= 1;
+        }
+        counter = colNum+1;
+        while (valid && noWall && counter < this.layout[rowNum].length){
+            if (this.getPosition(rowNum,counter) == 'b'){
+                valid = false;
+            }else {
+                if (Character.isDigit(this.getPosition(rowNum, counter))){
+                    noWall = false;
+                }
+            }
+            counter+=1;
+        }
+        return valid;
     }
 }
