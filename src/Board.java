@@ -31,9 +31,12 @@ public class Board {
         layout[row][col] = newChar;
     }
 
-    public boolean isBoardValid(){
+    public boolean isBoardValid(ArrayList<Space> bulbLocations, ArrayList<Space> wallLocations){
+        boolean bulbsValid = this.areBulbsValid(bulbLocations);
+        boolean wallsValid = this.areWallsValid(wallLocations);
+        boolean boardValid = this.checkForUnlitSpaces();
 
-        return false;
+        return bulbsValid && wallsValid && boardValid;
     }
 
     public boolean areBulbsValid(ArrayList<Space> bulbSpaces){
@@ -147,6 +150,18 @@ public class Board {
 
     public boolean validatePartialSolution(ArrayList<Space> bulbLocations, ArrayList<Space> wallLocations){
         return this.areBulbsValid(bulbLocations) && this.areWallsValid(wallLocations);
+    }
+
+    public boolean checkForUnlitSpaces(){
+        boolean valid = true;
+        for (int i = 0; i < this.layout.length; i++) {
+            for (int j = 0; j < this.layout[i].length; j++) {
+                if (layout[i][j]=='_'){
+                    valid = false;
+                }
+            }
+        }
+        return valid;
     }
 
 }
