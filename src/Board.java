@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Currency;
 
 public class Board {
     private char[][] layout;
@@ -50,9 +51,42 @@ public class Board {
         return valid;
     }
 
-    public boolean areWallsValid(Board board, ArrayList<Space> wallSpaces){
+    public boolean areWallsValid(ArrayList<Space> wallSpaces){
+        int counter = 0;
+        int numBulbs = 0;
+        int currX;
+        int currY;
+        int currWallNum;
+        boolean valid = true;
+        Space currSpace;
+        char currChar;
 
-        return false;
+        while (valid && counter < wallSpaces.size()){
+            currSpace = wallSpaces.get(counter);
+            currX = currSpace.getX();
+            currY = currSpace.getY();
+            currChar = this.getPosition(currX,currY);
+            if (Character.isDigit(currChar)){
+                currWallNum = currChar-48;
+
+                for (int i = -1; i <= 1; i++) {
+                    for (int j = -1; j <= 1; j++) {
+                        if ((i==0 || j==0) && ((currX+i) >= 0) && ((currY+j) >= 0)
+                                && ((currX+i) < this.layout.length) && ((currY+j) < this.layout[0].length)){
+                            if (this.getPosition(currX+i,currY+j)=='b'){
+                                numBulbs += 1;
+                            }
+                        }
+                    }
+                }
+                if (numBulbs!= currWallNum){
+                    valid = false;
+                }
+            }
+            numBulbs = 0;
+            counter++;
+        }
+        return valid;
     }
 
     public boolean isRowValid(int rowNum, int colNum){
