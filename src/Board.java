@@ -156,7 +156,7 @@ public class Board {
         boolean valid = true;
         for (int i = 0; i < this.layout.length; i++) {
             for (int j = 0; j < this.layout[i].length; j++) {
-                if (layout[i][j]=='_'){
+                if (valid && layout[i][j]=='_'){
                     valid = false;
                 }
             }
