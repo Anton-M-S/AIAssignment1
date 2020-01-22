@@ -145,4 +145,8 @@ public class Board {
         return valid;
     }
 
+    public boolean validatePartialSolution(ArrayList<Space> bulbLocations, ArrayList<Space> wallLocations){
+        return this.areBulbsValid(bulbLocations) && this.areWallsValid(wallLocations);
+    }
+
 }
