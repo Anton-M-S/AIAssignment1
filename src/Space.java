@@ -1,11 +1,13 @@
-public class Space {
+public class Space{
+    int x;
+    int y;
+    Space(int inX, int inY){
+        x = inX;
+        y = inY;
+    }
 
-    private int x;
-    private int y;
-
-    public Space(int x2, int y2) {
-        this.x = x2;
-        this.y = y2;
+    public Space deepClone(){
+        return new Space(x,y);
     }
 
     public int getX() {
