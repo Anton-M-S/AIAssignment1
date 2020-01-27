@@ -23,6 +23,22 @@ public
         }
     }
 
+    public Board(Board b){
+        this.spacesAva = b.spacesAva;
+        this.spacesLit = b.spacesLit;
+        this.layout = new char[b.layout.length][b.layout[0].length];
+        this.wallLocations = new ArrayList<>();
+        for (int i = 0; i < layout.length; i++) {
+            for (int j = 0; j < layout[i].length; j++) {
+                layout[i][j]=b.layout[i][j];
+                if (Character.isDigit(layout[i][j])){
+                    wallLocations.add(new Space(i,j));
+                }
+            }
+        }
+
+    }
+
     public String toString(){
         String toReturn = "";
         for (int i = 0; i < layout.length; i++) {
@@ -56,7 +72,7 @@ public
         Space currSpace;
         while (valid && counter<bulbSpaces.size()){
             currSpace = bulbSpaces.get(counter);
-            if (this.getPosition(currSpace.x, currSpace.y)!='l') {
+            if (this.getPosition(currSpace.x, currSpace.y)!='L') {
                 this.updatePosition('b', currSpace.x, currSpace.y);
                 this.isRowValid(currSpace.x, currSpace.y);
                 this.isColValid(currSpace.x, currSpace.y);
@@ -103,6 +119,7 @@ public
             numBulbs = 0;
             counter++;
         }
+        System.out.println(this);
         return valid;
     }
 
@@ -117,7 +134,7 @@ public
                 if (Character.isDigit(this.getPosition(rowNum, counter))){
                     noWall = false;
                 }else {
-                    this.updatePosition('l',rowNum,counter);
+                    this.updatePosition('L',rowNum,counter);
                 }
        //     }
             counter -= 1;
@@ -130,7 +147,7 @@ public
                 if (Character.isDigit(this.getPosition(rowNum, counter))){
                     noWall = false;
                 }else {
-                    this.updatePosition('l', rowNum, counter);
+                    this.updatePosition('L', rowNum, counter);
                 }
            // }
             counter+=1;
@@ -149,7 +166,7 @@ public
                 if (Character.isDigit(this.getPosition(counter, colNum))){
                     noWall = false;
                 }else {
-                    this.updatePosition('l', counter, colNum);
+                    this.updatePosition('L', counter, colNum);
                 }
             //}
             counter -= 1;
@@ -162,7 +179,7 @@ public
                 if (Character.isDigit(this.getPosition(counter, colNum))){
                     noWall = false;
                 }else {
-                    this.updatePosition('l', counter, colNum);
+                    this.updatePosition('L', counter, colNum);
                 }
           //  }
             counter+=1;
