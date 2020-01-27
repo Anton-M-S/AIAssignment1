@@ -67,10 +67,6 @@ public class Main {
 
 
     public static Board BT(ArrayList<Space> ava,char[][]board){
-
-        //----------
-        char[][] holder = board;
-        //----------
         Stack<Board> stackBT = new Stack<Board>();
         ArrayList<Space> buildLit = new ArrayList<Space>();
         ArrayList<Space> buildAva = ava;
@@ -85,20 +81,12 @@ public class Main {
 
         while(!stackBT.empty()){
             currObj = stackBT.pop();
-
-            //
-            // Review here
-            //
-
-            // if(pVal(currObj.spacesLit, holder)){
-            //     if(cVal(currObj.spacesLit, holder)){
-            //         return currObj;
-            //     }
-            //      someVar = someFindWhiteFunc(currObj.spacesLit, board)
-            //     BT(someVar, board);
-            // }
-
-
+             if(currObj.validatePartialSolution(currObj.spacesLit)){
+                 if(cVal(currObj)){
+                     return currObj;
+                 }
+                 BT(currObj.spacesLit, board);
+             }
             
             //System.out.println("BT 2");
             if(currObj.spacesAva.isEmpty()){break;}
