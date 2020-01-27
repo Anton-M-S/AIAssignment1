@@ -80,9 +80,11 @@ public class Main {
         System.out.println("BT Start");
 
         while(!stackBT.empty()){
-            currObj = stackBT.pop();
+            currObj = new Board(stackBT.pop());
              if(currObj.validatePartialSolution(currObj.spacesLit)){
-                 if(cVal(currObj)){
+                 System.out.println(currObj);
+                 if(currObj.isBoardValid(currObj.spacesLit)){
+                     System.out.println(currObj);
                      return currObj;
                  }
                  BT(currObj.spacesLit, board);
