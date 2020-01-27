@@ -9,4 +9,12 @@ public class Space{
     public Space deepClone(){
         return new Space(x,y);
     }
+
+    public int getX(){
+        return  x;
+    }
+
+    public int getY() {
+        return y;
+    }
 }
