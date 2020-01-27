@@ -159,7 +159,7 @@ public
 //            if (this.getPosition(rowNum,counter) == 'b'){
 //                valid = false;
 //            }else {
-                if (Character.isDigit(this.getPosition(counter, rowNum))){
+                if (Character.isDigit(this.getPosition(counter, colNum))){
                     noWall = false;
                 }else {
                     this.updatePosition('l', counter, colNum);

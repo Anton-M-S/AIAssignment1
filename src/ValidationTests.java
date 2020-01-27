@@ -110,4 +110,45 @@
          testList.add(new Space(0,1));
          assertTrue(singleLine.areWallsValid());
      }
+
+     @Test
+     public void partialSolutionValidates(){
+         testBoard = new char[3][3];
+         testBoard[0][0]= '_';
+         testBoard[0][1]= '_';
+         testBoard[0][2]= '_';
+         testBoard[1][0]= '_';
+         testBoard[1][1]= '3';
+         testBoard[1][2]= '_';
+         testBoard[2][0]= '_';
+         testBoard[2][1]= '_';
+         testBoard[2][2]= '_';
+         testList = new ArrayList<>();
+         testList.add(new Space(0,1));
+         testList.add(new Space(1,0));
+         testList.add(new Space(1,2));
+         singleLine = new Board(testBoard, new ArrayList<>(), testList);
+         assertTrue(singleLine.validatePartialSolution(testList));
+     }
+
+     @Test
+     public void partialSolutionInvalidates(){
+         testBoard = new char[3][3];
+         testBoard[0][0]= '_';
+         testBoard[0][1]= '_';
+         testBoard[0][2]= '_';
+         testBoard[1][0]= '_';
+         testBoard[1][1]= '3';
+         testBoard[1][2]= '_';
+         testBoard[2][0]= '_';
+         testBoard[2][1]= '_';
+         testBoard[2][2]= '_';
+         testList = new ArrayList<>();
+         testList.add(new Space(0,1));
+         testList.add(new Space(1,0));
+         testList.add(new Space(1,2));
+         testList.add(new Space(2,0));
+         singleLine = new Board(testBoard, new ArrayList<>(), testList);
+         assertFalse(singleLine.validatePartialSolution(testList));
+     }
  }
