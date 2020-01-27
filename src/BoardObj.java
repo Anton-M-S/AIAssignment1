@@ -5,7 +5,7 @@ public class BoardObj{
     ArrayList<Space> spacesAva;
     char[][] board;
 
-    BoardObj(ArrayList<Space> inS, ArrayList<Space> inA,String[][] inB){
+    BoardObj(ArrayList<Space> inS, ArrayList<Space> inA,char[][] inB){
         board = inB;
         spacesLit = inS;
         spacesAva = inA;
