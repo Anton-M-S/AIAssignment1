@@ -1,11 +1,16 @@
 import java.util.ArrayList;
+//import java.util.Currency;
 
-public class Board {
-    private char[][] layout;
+public
+ class Board {
+    public char[][] layout;
+    public ArrayList<Space> spacesAva;
+    public ArrayList<Space> spacesLit;
 
+    public Board(char[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit){
 
-
-    public Board(char[][] newBoard){
+        this.spacesAva = ava;
+        this.spacesLit = lit;
         layout = new char[newBoard.length][newBoard[0].length];
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
@@ -47,9 +52,9 @@ public class Board {
         Space currSpace;
         while (valid && counter<bulbSpaces.size()){
             currSpace = bulbSpaces.get(counter);
-            valid = this.isRowValid(currSpace.getX(), currSpace.getY());
+            valid = this.isRowValid(currSpace.x, currSpace.y);
             if (valid) {
-                valid = this.isColValid(currSpace.getX(), currSpace.getY());
+                valid = this.isColValid(currSpace.x, currSpace.y);
             }
             counter +=1;
         }
@@ -68,8 +73,8 @@ public class Board {
 
         while (valid && counter < wallSpaces.size()){
             currSpace = wallSpaces.get(counter);
-            currX = currSpace.getX();
-            currY = currSpace.getY();
+            currX = currSpace.x;
+            currY = currSpace.y;
             currChar = this.getPosition(currX,currY);
             if (Character.isDigit(currChar)){
                 currWallNum = currChar-48;
