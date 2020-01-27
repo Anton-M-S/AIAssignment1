@@ -81,12 +81,12 @@ public class Main {
 
         while(!stackBT.empty()){
             currObj = stackBT.pop();
-            // if(pVal(currObj)){
-            //     if(cVal(currObj)){
-            //         return currObj;
-            //     }
-            //     BT(currObj.spacesLit, board);
-            // }
+             if(currObj.validatePartialSolution(currObj.spacesLit)){
+                 if(cVal(currObj)){
+                     return currObj;
+                 }
+                 BT(currObj.spacesLit, board);
+             }
             
             //System.out.println("BT 2");
             if(currObj.spacesAva.isEmpty()){break;}

@@ -1,20 +1,24 @@
 import java.util.ArrayList;
-//import java.util.Currency;
 
 public
  class Board {
     public char[][] layout;
     public ArrayList<Space> spacesAva;
     public ArrayList<Space> spacesLit;
+    public ArrayList<Space> wallLocations;
 
     public Board(char[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit){
 
         this.spacesAva = ava;
         this.spacesLit = lit;
+        this.wallLocations = new ArrayList<>();
         layout = new char[newBoard.length][newBoard[0].length];
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
                 layout[i][j]=newBoard[i][j];
+                if (Character.isDigit(layout[i][j])){
+                    wallLocations.add(new Space(i,j));
+                }
             }
         }
     }
@@ -38,9 +42,9 @@ public
         layout[row][col] = newChar;
     }
 
-    public boolean isBoardValid(ArrayList<Space> bulbLocations, ArrayList<Space> wallLocations){
+    public boolean isBoardValid(ArrayList<Space> bulbLocations){
         boolean bulbsValid = this.areBulbsValid(bulbLocations);
-        boolean wallsValid = this.areWallsValid(wallLocations);
+        boolean wallsValid = this.areWallsValid();
         boolean boardValid = this.checkForUnlitSpaces();
 
         return bulbsValid && wallsValid && boardValid;
@@ -52,16 +56,19 @@ public
         Space currSpace;
         while (valid && counter<bulbSpaces.size()){
             currSpace = bulbSpaces.get(counter);
-            valid = this.isRowValid(currSpace.x, currSpace.y);
-            if (valid) {
-                valid = this.isColValid(currSpace.x, currSpace.y);
+            if (this.getPosition(currSpace.x, currSpace.y)!='l') {
+                this.updatePosition('b', currSpace.x, currSpace.y);
+                this.isRowValid(currSpace.x, currSpace.y);
+                this.isColValid(currSpace.x, currSpace.y);
+            }else {
+                valid = false;
             }
             counter +=1;
         }
         return valid;
     }
 
-    public boolean areWallsValid(ArrayList<Space> wallSpaces){
+    public boolean areWallsValid(){
         int counter = 0;
         int numBulbs = 0;
         int currX;
@@ -71,8 +78,8 @@ public
         Space currSpace;
         char currChar;
 
-        while (valid && counter < wallSpaces.size()){
-            currSpace = wallSpaces.get(counter);
+        while (valid && counter < wallLocations.size()){
+            currSpace = wallLocations.get(counter);
             currX = currSpace.x;
             currY = currSpace.y;
             currChar = this.getPosition(currX,currY);
@@ -104,24 +111,28 @@ public
         boolean noWall = true;
         int counter = colNum-1;
         while (valid && noWall && counter >= 0){
-            if (this.getPosition(rowNum, counter) == 'b'){
-                valid = false;
-            }else {
+//            if (this.getPosition(rowNum, counter) == 'b'){
+//                valid = false;
+//            }else {
                 if (Character.isDigit(this.getPosition(rowNum, counter))){
                     noWall = false;
+                }else {
+                    this.updatePosition('l',rowNum,counter);
                 }
-            }
+       //     }
             counter -= 1;
         }
         counter = colNum+1;
         while (valid && noWall && counter < this.layout[rowNum].length){
-            if (this.getPosition(rowNum,counter) == 'b'){
-                valid = false;
-            }else {
+//            if (this.getPosition(rowNum,counter) == 'b'){
+//                valid = false;
+//            }else {
                 if (Character.isDigit(this.getPosition(rowNum, counter))){
                     noWall = false;
+                }else {
+                    this.updatePosition('l', rowNum, counter);
                 }
-            }
+           // }
             counter+=1;
         }
         return valid;
@@ -132,31 +143,35 @@ public
         boolean noWall = true;
         int counter = rowNum-1;
         while (valid && noWall && counter >= 0){
-            if (this.getPosition(counter, rowNum) == 'b'){
-                valid = false;
-            }else {
+//            if (this.getPosition(counter, rowNum) == 'b'){
+//                valid = false;
+//            }else {
                 if (Character.isDigit(this.getPosition(counter, colNum))){
                     noWall = false;
+                }else {
+                    this.updatePosition('l', counter, colNum);
                 }
-            }
+            //}
             counter -= 1;
         }
         counter = rowNum+1;
         while (valid && noWall && counter < this.layout.length){
-            if (this.getPosition(rowNum,counter) == 'b'){
-                valid = false;
-            }else {
+//            if (this.getPosition(rowNum,counter) == 'b'){
+//                valid = false;
+//            }else {
                 if (Character.isDigit(this.getPosition(counter, rowNum))){
                     noWall = false;
+                }else {
+                    this.updatePosition('l', counter, colNum);
                 }
-            }
+          //  }
             counter+=1;
         }
         return valid;
     }
 
-    public boolean validatePartialSolution(ArrayList<Space> bulbLocations, ArrayList<Space> wallLocations){
-        return this.areBulbsValid(bulbLocations) && this.areWallsValid(wallLocations);
+    public boolean validatePartialSolution(ArrayList<Space> bulbLocations){
+        return this.areBulbsValid(bulbLocations) && this.areWallsValid();
     }
 
     public boolean checkForUnlitSpaces(){
