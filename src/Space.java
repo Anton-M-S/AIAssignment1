@@ -10,8 +10,8 @@ public class Space{
         return new Space(x,y);
     }
 
-    public int getX() {
-        return x;
+    public int getX(){
+        return  x;
     }
 
     public int getY() {
