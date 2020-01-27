@@ -89,7 +89,9 @@ public class Main {
             // }
             
             //System.out.println("BT 2");
+            if(currObj.spacesAva.isEmpty()){break;}
             for(Space inner : currObj.spacesAva){
+                System.out.println(stackBT.size());
 
                 buildLit = new ArrayList<Space>();
                 for(Space s : currObj.spacesLit) {
@@ -98,12 +100,13 @@ public class Main {
 
                 buildAva = new ArrayList<Space>();
                 for(Space a : currObj.spacesAva) {
-                    buildAva.add(a.deepClone());
+                    if(!a.equals(inner)){
+                        buildAva.add(a.deepClone());}
                 }
 
-                buildLit.add(inner);
-                buildAva.remove(inner);
+                buildLit.add(inner.deepClone());
 
+                //buildObj = new Board( board,buildAva,buildLit);
                 buildObj = new Board( board,buildAva,buildLit);
                 //System.out.println("Added Board with lights");
                 stackBT.add(buildObj);
