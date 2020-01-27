@@ -1,3 +1,4 @@
+
 public class Space{
     int x;
     int y;
