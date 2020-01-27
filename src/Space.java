@@ -1,11 +1,10 @@
-public class Space {
 
-    public int x;
-    public int y;
-
-    public Space(int x2, int y2){
-        this.x = x2;
-        this.y = y2;
+public class Space{
+    int x;
+    int y;
+    Space(int inX, int inY){
+        x = inX;
+        y = inY;
     }
 
     public Space deepClone(){
