@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public
- class Board {
+class Board {
     public char[][] layout;
     public ArrayList<Space> spacesAva;
     public ArrayList<Space> spacesLit;
@@ -131,25 +131,26 @@ public
 //            if (this.getPosition(rowNum, counter) == 'b'){
 //                valid = false;
 //            }else {
-                if (Character.isDigit(this.getPosition(rowNum, counter))){
-                    noWall = false;
-                }else {
-                    this.updatePosition('L',rowNum,counter);
-                }
-       //     }
+            if (Character.isDigit(this.getPosition(rowNum, counter))){
+                noWall = false;
+            }else {
+                this.updatePosition('L',rowNum,counter);
+            }
+            //     }
             counter -= 1;
         }
+        noWall = true;
         counter = colNum+1;
         while (valid && noWall && counter < this.layout[rowNum].length){
 //            if (this.getPosition(rowNum,counter) == 'b'){
 //                valid = false;
 //            }else {
-                if (Character.isDigit(this.getPosition(rowNum, counter))){
-                    noWall = false;
-                }else {
-                    this.updatePosition('L', rowNum, counter);
-                }
-           // }
+            if (Character.isDigit(this.getPosition(rowNum, counter))){
+                noWall = false;
+            }else {
+                this.updatePosition('L', rowNum, counter);
+            }
+            // }
             counter+=1;
         }
         return valid;
@@ -163,25 +164,26 @@ public
 //            if (this.getPosition(counter, rowNum) == 'b'){
 //                valid = false;
 //            }else {
-                if (Character.isDigit(this.getPosition(counter, colNum))){
-                    noWall = false;
-                }else {
-                    this.updatePosition('L', counter, colNum);
-                }
+            if (Character.isDigit(this.getPosition(counter, colNum))){
+                noWall = false;
+            }else {
+                this.updatePosition('L', counter, colNum);
+            }
             //}
             counter -= 1;
         }
+        noWall = true;
         counter = rowNum+1;
         while (valid && noWall && counter < this.layout.length){
 //            if (this.getPosition(rowNum,counter) == 'b'){
 //                valid = false;
 //            }else {
-                if (Character.isDigit(this.getPosition(counter, colNum))){
-                    noWall = false;
-                }else {
-                    this.updatePosition('L', counter, colNum);
-                }
-          //  }
+            if (Character.isDigit(this.getPosition(counter, colNum))){
+                noWall = false;
+            }else {
+                this.updatePosition('L', counter, colNum);
+            }
+            //  }
             counter+=1;
         }
         return valid;
@@ -201,6 +203,18 @@ public
             }
         }
         return valid;
+    }
+
+    public void findWhiteSpaces(){
+        ArrayList<Space> tempList = new ArrayList<>();
+        for (int i = 0; i < layout.length; i++) {
+            for (int j = 0; j < layout[i].length; j++) {
+                if (layout[i][j]=='_'){
+                    tempList.add(new Space(i,j));
+                }
+            }
+        }
+        this.spacesAva = tempList;
     }
 
 }
