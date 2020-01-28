@@ -45,7 +45,7 @@ public class Main {
                     board = new Board(newBoard, setWallSpaces(newBoard), new ArrayList<Space>());
 
                     System.out.println(board);//call Search functions from this line
-                    BT(board.spacesAva, board.layout);
+                    BT(board.spacesAva, board.layout, false);
                     System.out.println("BT passed");
                     //setWallSpaces(newBoard);
                     currline = fileScan.nextLine();
@@ -66,7 +66,7 @@ public class Main {
 
 
 
-    public static Board BT(ArrayList<Space> ava,char[][]board){
+    public static Board BT(ArrayList<Space> ava,char[][]board, boolean isPartial){
         Stack<Board> stackBT = new Stack<Board>();
         ArrayList<Space> buildLit = new ArrayList<Space>();
         ArrayList<Space> buildAva = ava;
@@ -81,15 +81,15 @@ public class Main {
 
         while(!stackBT.empty()){
             currObj = new Board(stackBT.pop());
-            System.out.println(currObj);
+            //System.out.println(currObj);
             if(currObj.validatePartialSolution(currObj.spacesLit)){
                 //System.out.println(currObj);
                 if(currObj.isBoardValid(currObj.spacesLit)){
-                   // System.out.println(currObj);
+                   System.out.println(currObj);
                     return currObj;
                 }
                 currObj.findWhiteSpaces();
-                BT(currObj.spacesAva, currObj.layout);
+               if(!isPartial){ BT(currObj.spacesAva, currObj.layout, true);}
             }
 
             //System.out.println("BT 2");
