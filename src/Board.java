@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 
-public
-class Board {
+public class Board {
     public char[][] layout;
     public ArrayList<Space> spacesAva;
     public ArrayList<Space> spacesLit;
@@ -119,7 +118,6 @@ class Board {
             numBulbs = 0;
             counter++;
         }
-        System.out.println(this);
         return valid;
     }
 
