@@ -151,4 +151,24 @@
          singleLine = new Board(testBoard, new ArrayList<>(), testList);
          assertFalse(singleLine.validatePartialSolution(testList));
      }
+
+     @Test
+     public void validateFullBoard(){
+         testBoard = new char[][]{{'_','_','_','_','_','1','_'},
+                 {'2','_','_','_','_','_','_'},
+                 {'_','_','_','_','_','0','_'},
+                 {'_','_','_','_','_','_','_'},
+                 {'_','1','_','_','_','_','_'},
+                 {'_','_','_','_','_','_','2'},
+                 {'_','_','_','_','_','_','_'}};
+         testList = new ArrayList<>();
+         testList.add(new Space(1,5));
+         testList.add(new Space(2,0));
+         testList.add(new Space(4,2));
+         testList.add(new Space(3,3));
+         testList.add(new Space(5,5));
+         testList.add(new Space(6,6));
+         singleLine = new Board(testBoard, new ArrayList<>(), testList);
+         assertFalse(singleLine.isBoardValid(testList));
+     }
  }

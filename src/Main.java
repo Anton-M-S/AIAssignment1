@@ -150,25 +150,25 @@ public class Main {
 
                     if (i+1<layout.length && (layout[i+1][j]=='1'||layout[i+1][j]=='2'||layout[i+1][j]=='3'||layout[i+1][j]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
                     }
 
                     else if (i>0 && (layout[i-1][j]=='1'||layout[i-1][j]=='2'||layout[i-1][j]=='3'||layout[i-1][j]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
                     }
 
                     else if (j+1<layout[0].length && (layout[i][j+1]=='1'||layout[i][j+1]=='2'||layout[i][j+1]=='3'||layout[i][j+1]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
                     }
 
                     else if (j>0 && (layout[i][j-1]=='1'||layout[i][j-1]=='2'||layout[i][j-1]=='3'||layout[i][j-1]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
                     }
                 }
