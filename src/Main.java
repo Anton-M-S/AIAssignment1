@@ -43,22 +43,21 @@ public class Main {
 
 
                     board = new Board(newBoard, setWallSpaces(newBoard), new ArrayList<Space>());
-                    
+
                     System.out.println(board);//call Search functions from this line
-                    BT(board.spacesAva, board.layout);
+                    BT(board.spacesAva, board.layout, false);
                     System.out.println("BT passed");
                     //setWallSpaces(newBoard);
                     currline = fileScan.nextLine();
                 }
             }
-        fileScan.close();
+            fileScan.close();
         } catch (Exception e) {
             System.out.println("error:" + e);
         }
-        
+
     }
 
-    
 
 
 
@@ -66,34 +65,37 @@ public class Main {
 
 
 
-    public static Board BT(ArrayList<Space> ava,char[][]board){
+
+    public static Board BT(ArrayList<Space> ava,char[][]board, boolean isPartial){
         Stack<Board> stackBT = new Stack<Board>();
         ArrayList<Space> buildLit = new ArrayList<Space>();
         ArrayList<Space> buildAva = ava;
         Board currObj = new Board(board, ava, buildLit);
         Board buildObj;
 
-        
-        
+
+
         stackBT.push(currObj);
 
         System.out.println("BT Start");
 
         while(!stackBT.empty()){
             currObj = new Board(stackBT.pop());
-             if(currObj.validatePartialSolution(currObj.spacesLit)){
-                 System.out.println(currObj);
-                 if(currObj.isBoardValid(currObj.spacesLit)){
-                     System.out.println(currObj);
-                     return currObj;
-                 }
-                 BT(currObj.spacesLit, board);
-             }
-            
+            //System.out.println(currObj);
+            if(currObj.validatePartialSolution(currObj.spacesLit)){
+                //System.out.println(currObj);
+                if(currObj.isBoardValid(currObj.spacesLit)){
+                   System.out.println(currObj);
+                    return currObj;
+                }
+                currObj.findWhiteSpaces();
+               if(!isPartial){ BT(currObj.spacesAva, currObj.layout, true);}
+            }
+
             //System.out.println("BT 2");
-            if(currObj.spacesAva.isEmpty()){break;}
+            //if(currObj.spacesAva.isEmpty()){break;}
             for(Space inner : currObj.spacesAva){
-                System.out.println(stackBT.size());
+               // System.out.println(stackBT.size());
 
                 buildLit = new ArrayList<Space>();
                 for(Space s : currObj.spacesLit) {
@@ -148,31 +150,31 @@ public class Main {
 
                     if (i+1<layout.length && (layout[i+1][j]=='1'||layout[i+1][j]=='2'||layout[i+1][j]=='3'||layout[i+1][j]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
-                    } 
-                    
+                    }
+
                     else if (i>0 && (layout[i-1][j]=='1'||layout[i-1][j]=='2'||layout[i-1][j]=='3'||layout[i-1][j]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
-                    } 
+                    }
 
                     else if (j+1<layout[0].length && (layout[i][j+1]=='1'||layout[i][j+1]=='2'||layout[i][j+1]=='3'||layout[i][j+1]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
-                    } 
+                    }
 
                     else if (j>0 && (layout[i][j-1]=='1'||layout[i][j-1]=='2'||layout[i][j-1]=='3'||layout[i][j-1]=='4')){
                         //System.out.println("Space at " + i + j);
-                        builderSpace = new Space(j, i);
+                        builderSpace = new Space(i, j);
                         returnList.add(builderSpace);
-                    } 
-                }  
+                    }
+                }
             }
-        
+
         }
-    return returnList;
+        return returnList;
     }
 }
