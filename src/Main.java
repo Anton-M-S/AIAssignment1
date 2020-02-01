@@ -46,13 +46,14 @@ public class Main {
                     board = new Board(newBoard, new ArrayList<Space>(), new ArrayList<Space>());
                     board.spacesAva = setWallSpaces(newBoard);
                     System.out.println(board);//call Search functions from this line
+     //               BT(board.spacesAva, board.layout, false);
                     Board result = stdBT(board, null, false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
                         System.out.println("BT passed");
                     }
-                    //setWallSpaces(newBoard);
+                    setWallSpaces(newBoard);
                     currline = fileScan.nextLine();
                 }
             }
