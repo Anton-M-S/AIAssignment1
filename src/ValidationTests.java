@@ -26,9 +26,26 @@
          testList.add(new Space(0,2));
          singleLine = new Board(testBoard, testList, new ArrayList<>());
          singleLine.isRowValid(0,0);
-         assertEquals('l', singleLine.getPosition(0,1));
+         assertEquals('L', singleLine.getPosition(0,1));
      }
 
+     @Test
+     public void wallWithTooFewBulbsNotOverloaded(){
+         testBoard = new char[3][3];
+         testBoard[0][0] = '_';
+         testBoard[0][1] = 'b';
+         testBoard[0][2] = '_';
+         testBoard[1][0] = 'b';
+         testBoard[1][1] = '4';
+         testBoard[1][2] = '_';
+         testBoard[2][0] = '_';
+         testBoard[2][1] = 'b';
+         testBoard[2][2] = '_';
+         testList = new ArrayList<>();
+         testList.add(new Space(1,1));
+         singleLine = new Board(testBoard, new ArrayList<Space>(), testList);
+         assertFalse(singleLine.areWallsOverloaded());
+     }
 //     @Test
 //     public void bulbToTheRightOfCurrentInvalidates(){
 //         testBoard = new char[1][3];
