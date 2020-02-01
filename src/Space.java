@@ -19,4 +19,12 @@ public class Space {
     public int getY() {
         return y;
     }
+
+    public boolean equals(Space s){
+        return s.x == this.x && s.y == this.y;
+    }
+
+    public String toString(){
+        return x +","+y;
+    }
 }
