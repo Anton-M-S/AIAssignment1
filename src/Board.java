@@ -243,7 +243,7 @@ public class Board {
         }
         return valid;
     }
-
+//changed to return a list of white spaces instead of updating spacesAva
     public ArrayList<Space> findWhiteSpaces(){
         ArrayList<Space> tempList = new ArrayList<>();
         for (int i = 0; i < layout.length; i++) {
@@ -255,26 +255,30 @@ public class Board {
         }
         return tempList;
     }
-
+//now the method to update spacesava
     public void setAvailableSpacesToAllBlanks(){
         this.spacesAva = this.findWhiteSpaces();
     }
 
+    //moves a lit space from spaces ava to spacesLit
     public void lightSpace(Space toLight){
         Space temp;
         boolean found = false;
         int counter = 0;
-        while (counter<this.spacesAva.size() && !found){
-            temp = spacesAva.get(counter);
-            if (temp.equals(toLight)){
-                spacesLit.add(temp);
-                spacesAva.remove(counter);
-                found = true;
+        if (layout[toLight.getX()][toLight.getY()]!='L') {
+            while (counter < this.spacesAva.size() && !found) {
+                temp = spacesAva.get(counter);
+                if (temp.equals(toLight)) {
+                    spacesLit.add(temp);
+                    spacesAva.remove(counter);
+                    found = true;
+                }
+                counter++;
             }
-            counter++;
         }
     }
 
+    //removes a space from spaces available
     private void removeAvailableSpace(Space s){
         boolean found = false;
         int counter =0;
@@ -287,7 +291,9 @@ public class Board {
         }
     }
 
+    //checks for available spaces that are no longer valid and removes them
     public void updateAvailableSpaces(){
+        //remove a space if it has a bulb lighting it
         Space currSpace;
         for (int i = 0; i < spacesAva.size(); i++) {
             currSpace = spacesAva.get(i);
@@ -295,8 +301,9 @@ public class Board {
                 spacesAva.remove(i);
                 i--;
             }
-        }
+        }//end remove space if bulb is lighting it
 
+        //remove spaces adjacent to walls that are already full
         int wallVal;
         int currX, currY;
         for (int i = 0; i < wallLocations.size(); i++) {
@@ -318,9 +325,10 @@ public class Board {
                     removeAvailableSpace(new Space(currX+1, currY));
                 }
             }
-        }
+        }//end wall space removal
     }
 
+    //puts a b on a space to represent a bulb(necessary for removal of available spaces next to filled walls)
     public void placeBulb(Space nowBulb){
         if (layout[nowBulb.getX()][nowBulb.getY()]=='_'){
             layout[nowBulb.getX()][nowBulb.getY()] = 'b';
