@@ -47,7 +47,7 @@ public class Main {
                     board.spacesAva = setWallSpaces(newBoard);
                     System.out.println(board);//call Search functions from this line
      //               BT(board.spacesAva, board.layout, false);
-                    Board result = stdBT(board, null, false);
+                    Board result = BTRecursive(board, null, false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
@@ -65,36 +65,40 @@ public class Main {
     }
 
 
-    public static Board stdBT(Board board, Space nextBulb, boolean isPartial) {
+    public static Board BTRecursive(Board board, Space nextBulb, boolean isPartial) {
         //  System.out.println(i++);
-        boolean partial = isPartial;
+        boolean partial = isPartial;//remember the state of whether or not teh backtrack began as a partial solution
         Board newBoard = new Board(board);
-        if (nextBulb != null) {
-            newBoard.placeBulb(nextBulb);
-            newBoard.lightSpace(nextBulb);
+        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
+            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.lightSpace(nextBulb);//
         }
-        newBoard.updateAvailableSpaces();
+        newBoard.updateAvailableSpaces();//remove invalid spaces from available
 
 
         Board tempBoard = null;
 
-        if (newBoard.isBoardValid(newBoard.spacesLit)) {
+        if (newBoard.isBoardValid(newBoard.spacesLit)) {//if it is a fully valid board
             //System.out.println(newBoard);
-            return newBoard;
+            return newBoard;//return it
         } else {
-            if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {
+            if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
                // System.out.println(newBoard);
-                newBoard.setAvailableSpacesToAllBlanks();
-                Board partialSol = stdBT(newBoard, null, true);
-                if (partialSol != null) {
+                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
+                Board partialSol = BTRecursive(newBoard, null, true);
+                if (partialSol != null) {//if the solution found on the previous line was valid, return it
+                    //this works because the only place that returns anything other than null is if there is
+                    //a complete solution
                     return partialSol;
                 }
             } else {
+                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
                 if (newBoard.areBulbsValid(newBoard.spacesLit) && !newBoard.areWallsOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
+                    //tempboard will always be null, unless it is returned a fully valid solution
                     while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                        tempBoard = stdBT(newBoard, availSpaces.get(counter), partial);
+                        tempBoard = BTRecursive(newBoard, availSpaces.get(counter), partial);
                         counter++;
                     }
                 }
