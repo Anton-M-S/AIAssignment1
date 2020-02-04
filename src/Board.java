@@ -1,24 +1,26 @@
 import java.util.ArrayList;
 
 public class Board {
-    public char[][] layout;
+    public Space[][] layout;
     public ArrayList<Space> spacesAva;
     public ArrayList<Space> spacesLit;
-    public ArrayList<Space> wallLocations;
+    public ArrayList<Wall> wallLocations;
     private int wallTotal;
 
-    public Board(char[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit){
+    public Board(Space[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit){
         this.wallTotal = 0;
         this.spacesAva = ava;
         this.spacesLit = lit;
         this.wallLocations = new ArrayList<>();
-        layout = new char[newBoard.length][newBoard[0].length];
+        int tempNum;
+        layout = new Space[newBoard.length][newBoard[0].length];
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
                 layout[i][j]=newBoard[i][j];
-                if (Character.isDigit(layout[i][j])){
-                    wallLocations.add(new Space(i,j));
-                    wallTotal += layout[i][j]-48;
+                if (layout[i][j] instanceof Wall){
+                    tempNum = ((Wall)layout[i][j]).getWallNum();
+                    wallLocations.add((Wall)layout[i][j]);
+                    wallTotal += tempNum;
                 }
             }
         }
@@ -29,13 +31,16 @@ public class Board {
         this.spacesAva.addAll(b.spacesAva);
         this.spacesLit = new ArrayList<>();
         this.spacesLit.addAll(b.spacesLit);
-        this.layout = new char[b.layout.length][b.layout[0].length];
+        this.layout = new Space[b.layout.length][b.layout[0].length];
         this.wallLocations = new ArrayList<>();
+        int tempNum;
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
                 layout[i][j]=b.layout[i][j];
-                if (Character.isDigit(layout[i][j])){
-                    wallLocations.add(new Space(i,j));
+                if (layout[i][j] instanceof Wall){
+                    tempNum = ((Wall)layout[i][j]).getWallNum();
+                    wallLocations.add((Wall)layout[i][j]);
+                    wallTotal += tempNum;
                 }
             }
         }
@@ -49,19 +54,19 @@ public class Board {
         String toReturn = "";
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                toReturn+=layout[i][j];
+                toReturn+=layout[i][j].getSpaceType();
             }
             toReturn+='\n';
         }
         return toReturn;
     }
 
-    public char getPosition(int row, int col){
+    public Space getPosition(int row, int col){
         return layout[row][col];
     }
 
-    public void updatePosition(char newChar, int row, int col){
-        layout[row][col] = newChar;
+    public void updatePosition(Space newSpace){
+        layout[newSpace.getX()][newSpace.getY()] = newSpace;
     }
 
     public boolean isBoardValid(ArrayList<Space> bulbLocations){
@@ -78,10 +83,10 @@ public class Board {
         Space currSpace;
         while (valid && counter<bulbSpaces.size()){
             currSpace = bulbSpaces.get(counter);
-            if (this.getPosition(currSpace.x, currSpace.y)!='L') {
-                this.updatePosition('b', currSpace.x, currSpace.y);
-                this.isRowValid(currSpace.x, currSpace.y);
-                this.isColValid(currSpace.x, currSpace.y);
+            if (!(this.getPosition(currSpace.getX(), currSpace.getY())instanceof LitSpace)) {
+                this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));
+                this.isRowValid(currSpace.getX(), currSpace.getY());
+                this.isColValid(currSpace.getX(), currSpace.getY());
             }else {
                 valid = false;
             }
@@ -98,15 +103,15 @@ public class Board {
         int currWallNum;
         boolean valid = true;
         Space currSpace;
-        char currChar;
+        //Space currChar;
 
         while (valid && counter < wallLocations.size()){
-            currSpace = wallLocations.get(counter);
-            currX = currSpace.x;
-            currY = currSpace.y;
-            currChar = this.getPosition(currX,currY);
-            if (Character.isDigit(currChar)){
-                currWallNum = currChar-48;
+            currSpace = (Wall)wallLocations.get(counter);
+            currX = currSpace.getX();
+            currY = currSpace.getY();
+            //currChar = this.getPosition(currX,currY);
+            if (currSpace instanceof Wall){
+                currWallNum = ((Wall)currSpace).getWallNum();
 
                 numBulbs = this.getNumBulbsAroundWall(currSpace);
                 if (numBulbs!= currWallNum){
@@ -130,11 +135,11 @@ public class Board {
 
         while (overloaded && counter < wallLocations.size()){
             currSpace = wallLocations.get(counter);
-            currX = currSpace.x;
-            currY = currSpace.y;
-            currChar = this.getPosition(currX,currY);
-            if (Character.isDigit(currChar)){
-                currWallNum = currChar-48;
+            currX = currSpace.getX();
+            currY = currSpace.getY();
+            //currChar = this.getPosition(currX,currY);
+            if (currSpace instanceof Wall){
+                currWallNum = ((Wall)currSpace).getWallNum();
                 numBulbs = this.getNumBulbsAroundWall(currSpace);
 
                 if (numBulbs <= currWallNum){
@@ -154,7 +159,7 @@ public class Board {
             for (int j = -1; j <= 1; j++) {
                 if ((i==0 || j==0) && ((currX+i) >= 0) && ((currY+j) >= 0)
                         && ((currX+i) < this.layout.length) && ((currY+j) < this.layout[0].length)){
-                    if (this.getPosition(currX+i,currY+j)=='b'){
+                    if (this.getPosition(currX+i,currY+j) instanceof Bulb){
                         numBulbs += 1;
                     }
                 }
@@ -170,10 +175,10 @@ public class Board {
 //            if (this.getPosition(rowNum, counter) == 'b'){
 //                valid = false;
 //            }else {
-            if (Character.isDigit(this.getPosition(rowNum, counter))){
+            if (this.getPosition(rowNum, counter) instanceof Wall){
                 noWall = false;
             }else {
-                this.updatePosition('L',rowNum,counter);
+                this.updatePosition(new LitSpace(rowNum, counter));
             }
             //     }
             counter -= 1;
@@ -184,10 +189,10 @@ public class Board {
 //            if (this.getPosition(rowNum,counter) == 'b'){
 //                valid = false;
 //            }else {
-            if (Character.isDigit(this.getPosition(rowNum, counter))){
+            if (this.getPosition(rowNum, counter) instanceof Wall){
                 noWall = false;
             }else {
-                this.updatePosition('L', rowNum, counter);
+                this.updatePosition(new LitSpace(rowNum, counter));
             }
             // }
             counter+=1;
@@ -203,10 +208,10 @@ public class Board {
 //            if (this.getPosition(counter, rowNum) == 'b'){
 //                valid = false;
 //            }else {
-            if (Character.isDigit(this.getPosition(counter, colNum))){
+            if (this.getPosition(counter, colNum) instanceof Wall){
                 noWall = false;
             }else {
-                this.updatePosition('L', counter, colNum);
+                this.updatePosition(new LitSpace(counter, colNum));
             }
             //}
             counter -= 1;
@@ -217,10 +222,10 @@ public class Board {
 //            if (this.getPosition(rowNum,counter) == 'b'){
 //                valid = false;
 //            }else {
-            if (Character.isDigit(this.getPosition(counter, colNum))){
+            if (this.getPosition(counter, colNum) instanceof Wall){
                 noWall = false;
             }else {
-                this.updatePosition('L', counter, colNum);
+                this.updatePosition(new LitSpace(counter, colNum));
             }
             //  }
             counter+=1;
@@ -236,7 +241,7 @@ public class Board {
         boolean valid = true;
         for (int i = 0; i < this.layout.length; i++) {
             for (int j = 0; j < this.layout[i].length; j++) {
-                if (valid && layout[i][j]=='_'){
+                if (valid && layout[i][j] instanceof UnlitSpace){
                     valid = false;
                 }
             }
@@ -248,7 +253,7 @@ public class Board {
         ArrayList<Space> tempList = new ArrayList<>();
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                if (layout[i][j]=='_'){
+                if (layout[i][j] instanceof UnlitSpace){
                     tempList.add(new Space(i,j));
                 }
             }
@@ -299,7 +304,7 @@ public class Board {
         Space currSpace;
         for (int i = 0; i < spacesAva.size(); i++) {
             currSpace = spacesAva.get(i);
-            if (layout[currSpace.getX()][currSpace.getY()]=='L'){
+            if (layout[currSpace.getX()][currSpace.getY()] instanceof LitSpace){
                 spacesAva.remove(i);
                 i--;
             }
@@ -312,18 +317,18 @@ public class Board {
             currSpace = wallLocations.get(i);
             currX = currSpace.getX();
             currY = currSpace.getY();
-            wallVal = layout[currX][currY]-48;
+            wallVal = ((Wall)layout[currX][currY]).getWallNum();
             if (wallVal<=this.getNumBulbsAroundWall(currSpace)){
-                if (currX-1>0 && layout[currX-1][currY]=='_'){
+                if (currX-1>0 && layout[currX-1][currY]instanceof UnlitSpace){
                     removeAvailableSpace(new Space(currX-1, currY));
                 }
-                if (currX+1<layout.length && layout[currX+1][currY]=='_'){
+                if (currX+1<layout.length && layout[currX+1][currY] instanceof UnlitSpace){
                     removeAvailableSpace(new Space(currX+1, currY));
                 }
-                if (currY-1>0 && layout[currX][currY-1]=='_'){
+                if (currY-1>0 && layout[currX][currY-1] instanceof UnlitSpace){
                     removeAvailableSpace(new Space(currX, currY-1));
                 }
-                if (currY+1<layout[currX].length && layout[currX][currY+1]=='_'){
+                if (currY+1<layout[currX].length && layout[currX][currY+1] instanceof UnlitSpace){
                     removeAvailableSpace(new Space(currX+1, currY));
                 }
             }
@@ -333,8 +338,8 @@ public class Board {
     //puts a b on a space to represent a bulb(necessary for removal of available spaces next to filled walls)
     //USE FOR FORWARD CHECKING
     public void placeBulb(Space nowBulb){
-        if (layout[nowBulb.getX()][nowBulb.getY()]=='_'){
-            layout[nowBulb.getX()][nowBulb.getY()] = 'b';
+        if (layout[nowBulb.getX()][nowBulb.getY()] instanceof UnlitSpace){
+            layout[nowBulb.getX()][nowBulb.getY()] = new Bulb(nowBulb.getX(), nowBulb.getY());
         }
     }
 
@@ -342,37 +347,37 @@ public class Board {
         int counter = 0;
         Space currWall;
         int currX, currY;
-        char currChar;
+        int currChar;
         Space tempSpace;
         while (counter<this.wallLocations.size()){
             currWall = this.wallLocations.get(counter);
             currX = currWall.getX();
             currY = currWall.getY();
-            currChar = layout[currX][currY];
+            currChar =((Wall)currWall).getWallNum();
             if (currChar !=0) {
-                if (currChar == '4') {
-                    if (layout[currX+1][currY]!='b') {
+                if (currChar == 4) {
+                    if (!(layout[currX+1][currY] instanceof Bulb)) {
                         tempSpace = new Space(currX + 1, currY);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (layout[currX-1][currY]!='b') {
+                    if (!(layout[currX-1][currY] instanceof Bulb)) {
                         tempSpace = new Space(currX - 1, currY);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (layout[currX][currY+1]!='b') {
+                    if (!(layout[currX][currY+1] instanceof Bulb)) {
                         tempSpace = new Space(currX, currY + 1);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (layout[currX][currY-1]!='b') {
+                    if (!(layout[currX][currY-1] instanceof Bulb)) {
                         tempSpace = new Space(currX, currY - 1);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
                 } else {
-                    if (currChar == '3' &&
+                    if (currChar == 3 &&
                             (currX + 1 >= layout.length || currX - 1 < 0 || currY + 1 >= layout[currX].length || currY - 1 < 0
                                     || isWall(currX + 1, currY) || isWall(currX - 1, currY)
                                     || isWall(currX, currY - 1) || isWall(currX, currY + 1))) {
@@ -381,7 +386,7 @@ public class Board {
                                 if (i == 0 || j == 0) {
                                     if ((currX + i < layout.length && currX + i >= 0
                                             && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
-                                        if (layout[currX + i][currY + j] != 'b') {
+                                        if (!(layout[currX + i][currY + j] instanceof Bulb)) {
                                             tempSpace = new Space(currX + i, currY + j);
                                             this.placeBulb(tempSpace);
                                             this.lightSpace(tempSpace);
@@ -401,7 +406,7 @@ public class Board {
     public boolean isWall(int x, int y){
         boolean isWall = false;
         if (x>=0 && x < layout.length && y>=0 && y<layout[0].length){
-            isWall = Character.isDigit(layout[x][y]);
+            isWall = layout[x][y] instanceof Wall;
         }
         return isWall;
     }
