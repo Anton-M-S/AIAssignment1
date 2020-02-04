@@ -1,13 +1,13 @@
 import java.util.ArrayList;
 
 public class Board {
-    public Space[][] layout;
+    private Space[][] layout;
     public ArrayList<Space> spacesAva;
     public ArrayList<Space> spacesLit;
-    public ArrayList<Wall> wallLocations;
+    private ArrayList<Wall> wallLocations;
     private int wallTotal;
 
-    public Board(Space[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit){
+    public Board(Space[][] newBoard, ArrayList<Space> ava, ArrayList<Space> lit) {
         this.wallTotal = 0;
         this.spacesAva = ava;
         this.spacesLit = lit;
@@ -16,17 +16,17 @@ public class Board {
         layout = new Space[newBoard.length][newBoard[0].length];
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                layout[i][j]=newBoard[i][j];
-                if (layout[i][j] instanceof Wall){
-                    tempNum = ((Wall)layout[i][j]).getWallNum();
-                    wallLocations.add((Wall)layout[i][j]);
+                layout[i][j] = newBoard[i][j];
+                if (layout[i][j] instanceof Wall) {
+                    tempNum = ((Wall) layout[i][j]).getWallNum();
+                    wallLocations.add((Wall) layout[i][j]);
                     wallTotal += tempNum;
                 }
             }
         }
     }
 
-    public Board(Board b){
+    public Board(Board b) {
         this.spacesAva = new ArrayList<>();
         this.spacesAva.addAll(b.spacesAva);
         this.spacesLit = new ArrayList<>();
@@ -36,10 +36,10 @@ public class Board {
         int tempNum;
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                layout[i][j]=b.layout[i][j];
-                if (layout[i][j] instanceof Wall){
-                    tempNum = ((Wall)layout[i][j]).getWallNum();
-                    wallLocations.add((Wall)layout[i][j]);
+                layout[i][j] = b.layout[i][j];
+                if (layout[i][j] instanceof Wall) {
+                    tempNum = ((Wall) layout[i][j]).getWallNum();
+                    wallLocations.add((Wall) layout[i][j]);
                     wallTotal += tempNum;
                 }
             }
@@ -47,29 +47,30 @@ public class Board {
 
     }
 
-    public int getWallTotal(){
+    public int getWallTotal() {
         return wallTotal;
     }
-    public String toString(){
+
+    public String toString() {
         String toReturn = "";
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                toReturn+=layout[i][j].getSpaceType();
+                toReturn += layout[i][j].getSpaceType();
             }
-            toReturn+='\n';
+            toReturn += '\n';
         }
         return toReturn;
     }
 
-    public Space getPosition(int row, int col){
+    public Space getPosition(int row, int col) {
         return layout[row][col];
     }
 
-    public void updatePosition(Space newSpace){
+    private void updatePosition(Space newSpace) {
         layout[newSpace.getX()][newSpace.getY()] = newSpace;
     }
 
-    public boolean isBoardValid(ArrayList<Space> bulbLocations){
+    public boolean isBoardValid(ArrayList<Space> bulbLocations) {
         boolean bulbsValid = this.areBulbsValid(bulbLocations);
         boolean wallsValid = this.areWallsValid();
         boolean boardValid = this.checkForUnlitSpaces();
@@ -77,89 +78,84 @@ public class Board {
         return bulbsValid && wallsValid && boardValid;
     }
 
-    public boolean areBulbsValid(ArrayList<Space> bulbSpaces){
+    public boolean areBulbsValid(ArrayList<Space> bulbSpaces) {
         boolean valid = true;
         int counter = 0;
         Space currSpace;
-        while (valid && counter<bulbSpaces.size()){
+        while (valid && counter < bulbSpaces.size()) {
             currSpace = bulbSpaces.get(counter);
-            if (!(this.getPosition(currSpace.getX(), currSpace.getY())instanceof LitSpace)) {
+            if (!(this.getPosition(currSpace.getX(), currSpace.getY()) instanceof LitSpace)) {
                 this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));
                 this.isRowValid(currSpace.getX(), currSpace.getY());
                 this.isColValid(currSpace.getX(), currSpace.getY());
-            }else {
+            } else {
                 valid = false;
             }
-            counter +=1;
+            counter += 1;
         }
         return valid;
     }
 
-    public boolean areWallsValid(){
+    public boolean areWallsValid() {
         int counter = 0;
         int numBulbs;
         int currX;
         int currY;
         int currWallNum;
         boolean valid = true;
-        Space currSpace;
+        Wall currSpace;
         //Space currChar;
 
-        while (valid && counter < wallLocations.size()){
-            currSpace = (Wall)wallLocations.get(counter);
+        while (valid && counter < wallLocations.size()) {
+            currSpace = wallLocations.get(counter);
             currX = currSpace.getX();
             currY = currSpace.getY();
             //currChar = this.getPosition(currX,currY);
-            if (currSpace instanceof Wall){
-                currWallNum = ((Wall)currSpace).getWallNum();
+            // if (currSpace instanceof Wall){
+            currWallNum = currSpace.getWallNum();
 
-                numBulbs = this.getNumBulbsAroundWall(currSpace);
-                if (numBulbs!= currWallNum){
-                    valid = false;
-                }
+            numBulbs = this.getNumBulbsAroundWall(currSpace);
+            if (numBulbs != currWallNum) {
+                valid = false;
             }
+            // }
             counter++;
         }
         return valid;
     }
 
-    public boolean areWallsOverloaded(){
+    public boolean areWallsOverloaded() {
         int counter = 0;
         int numBulbs;
-        int currX;
-        int currY;
         int currWallNum;
         boolean overloaded = true;
-        Space currSpace;
-        char currChar;
+        Wall currSpace;
 
-        while (overloaded && counter < wallLocations.size()){
+        while (overloaded && counter < wallLocations.size()) {
             currSpace = wallLocations.get(counter);
-            currX = currSpace.getX();
-            currY = currSpace.getY();
             //currChar = this.getPosition(currX,currY);
-            if (currSpace instanceof Wall){
-                currWallNum = ((Wall)currSpace).getWallNum();
-                numBulbs = this.getNumBulbsAroundWall(currSpace);
+            // if (currSpace instanceof Wall){
+            currWallNum = currSpace.getWallNum();
+            numBulbs = this.getNumBulbsAroundWall(currSpace);
 
-                if (numBulbs <= currWallNum){
-                    overloaded = false;
-                }
+            if (numBulbs <= currWallNum) {
+                overloaded = false;
             }
+            //  }
             counter++;
         }
         return overloaded;
     }
 
-    public int getNumBulbsAroundWall(Space wall){
+    private int getNumBulbsAroundWall(Space wall) {
         int currX = wall.getX();
         int currY = wall.getY();
         int numBulbs = 0;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if ((i==0 || j==0) && ((currX+i) >= 0) && ((currY+j) >= 0)
-                        && ((currX+i) < this.layout.length) && ((currY+j) < this.layout[0].length)){
-                    if (this.getPosition(currX+i,currY+j) instanceof Bulb){
+                if ((i == 0 || j == 0) && ((currX + i) >= 0) && ((currY + j) >= 0)
+                        && ((currX + i) < this.layout.length) && ((currY + j) < this.layout[0].length)) {
+                    if (this.getPosition(currX + i, currY + j) instanceof Bulb) {
                         numBulbs += 1;
                     }
                 }
@@ -167,129 +163,109 @@ public class Board {
         }
         return numBulbs;
     }
-    public boolean isRowValid(int rowNum, int colNum){
-        boolean valid = true;
+
+    public void isRowValid(int rowNum, int colNum) {
         boolean noWall = true;
-        int counter = colNum-1;
-        while (valid && noWall && counter >= 0){
-//            if (this.getPosition(rowNum, counter) == 'b'){
-//                valid = false;
-//            }else {
-            if (this.getPosition(rowNum, counter) instanceof Wall){
-                noWall = false;
-            }else {
-                this.updatePosition(new LitSpace(rowNum, counter));
-            }
-            //     }
+        int counter = colNum - 1;
+        while (noWall && counter >= 0) {
+            noWall = lightUpFromBulb(rowNum,counter, noWall);
+
             counter -= 1;
         }
         noWall = true;
-        counter = colNum+1;
-        while (valid && noWall && counter < this.layout[rowNum].length){
-//            if (this.getPosition(rowNum,counter) == 'b'){
-//                valid = false;
-//            }else {
-            if (this.getPosition(rowNum, counter) instanceof Wall){
-                noWall = false;
-            }else {
-                this.updatePosition(new LitSpace(rowNum, counter));
-            }
-            // }
-            counter+=1;
+        counter = colNum + 1;
+        while (noWall && counter < this.layout[rowNum].length) {
+
+            noWall = lightUpFromBulb(rowNum,counter, noWall);
+
+            counter += 1;
         }
-        return valid;
     }
 
-    public boolean isColValid(int rowNum, int colNum){
-        boolean valid = true;
+    public void isColValid(int rowNum, int colNum) {
         boolean noWall = true;
-        int counter = rowNum-1;
-        while (valid && noWall && counter >= 0){
-//            if (this.getPosition(counter, rowNum) == 'b'){
-//                valid = false;
-//            }else {
-            if (this.getPosition(counter, colNum) instanceof Wall){
-                noWall = false;
-            }else {
-                this.updatePosition(new LitSpace(counter, colNum));
-            }
-            //}
+        int counter = rowNum - 1;
+        while (noWall && counter >= 0) {
+            noWall = lightUpFromBulb(counter,colNum, noWall);
             counter -= 1;
         }
         noWall = true;
-        counter = rowNum+1;
-        while (valid && noWall && counter < this.layout.length){
-//            if (this.getPosition(rowNum,counter) == 'b'){
-//                valid = false;
-//            }else {
-            if (this.getPosition(counter, colNum) instanceof Wall){
-                noWall = false;
-            }else {
-                this.updatePosition(new LitSpace(counter, colNum));
-            }
-            //  }
-            counter+=1;
+        counter = rowNum + 1;
+        while (noWall && counter < this.layout.length) {
+
+            noWall = lightUpFromBulb(counter,colNum, noWall);
+
+            counter += 1;
         }
-        return valid;
     }
 
-    public boolean validatePartialSolution(ArrayList<Space> bulbLocations){
+    private boolean lightUpFromBulb(int x, int y, boolean noWall){
+        if (this.getPosition(x, y) instanceof Wall) {
+            noWall = false;
+        } else {
+            this.updatePosition(new LitSpace(x, y));
+        }
+        return noWall;
+    }
+    public boolean validatePartialSolution(ArrayList<Space> bulbLocations) {
         return this.areBulbsValid(bulbLocations) && this.areWallsValid();
     }
 
-    public boolean checkForUnlitSpaces(){
+    private boolean checkForUnlitSpaces() {
         boolean valid = true;
         for (int i = 0; i < this.layout.length; i++) {
             for (int j = 0; j < this.layout[i].length; j++) {
-                if (valid && layout[i][j] instanceof UnlitSpace){
+                if (valid && layout[i][j] instanceof UnlitSpace) {
                     valid = false;
                 }
             }
         }
         return valid;
     }
-//changed to return a list of white spaces instead of updating spacesAva
-    public ArrayList<Space> findWhiteSpaces(){
+
+    //changed to return a list of white spaces instead of updating spacesAva
+    private ArrayList<Space> findWhiteSpaces() {
         ArrayList<Space> tempList = new ArrayList<>();
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                if (layout[i][j] instanceof UnlitSpace){
-                    tempList.add(new Space(i,j));
+                if (layout[i][j] instanceof UnlitSpace) {
+                    tempList.add(new Space(i, j));
                 }
             }
         }
         return tempList;
     }
-//now the method to update spacesava
-    public void setAvailableSpacesToAllBlanks(){
+
+    //now the method to update spacesava
+    public void setAvailableSpacesToAllBlanks() {
         this.spacesAva = this.findWhiteSpaces();
     }
 
     //moves a lit space from spaces ava to spacesLit
     //MAY NEED TO WRITE A NEW VERSION FOR FORWARD CHECKING THAT CKECLS IF THE SPACE IS LIT
-    public void lightSpace(Space toLight){
+    public void lightSpace(Space toLight) {
         Space temp;
         boolean found = false;
         int counter = 0;
         //if (layout[toLight.getX()][toLight.getY()]!='L') {
-            while (counter < this.spacesAva.size() && !found) {
-                temp = spacesAva.get(counter);
-                if (temp.equals(toLight)) {
-                    spacesLit.add(temp);
-                    spacesAva.remove(counter);
-                    found = true;
-                }
-                counter++;
+        while (counter < this.spacesAva.size() && !found) {
+            temp = spacesAva.get(counter);
+            if (temp.equals(toLight)) {
+                spacesLit.add(temp);
+                spacesAva.remove(counter);
+                found = true;
             }
+            counter++;
+        }
         //}
     }
 
     //removes a space from spaces available
-    private void removeAvailableSpace(Space s){
+    private void removeAvailableSpace(Space s) {
         boolean found = false;
-        int counter =0;
-        while (!found && counter<spacesAva.size()){
-            if (spacesAva.get(counter).equals(s)){
+        int counter = 0;
+        while (!found && counter < spacesAva.size()) {
+            if (spacesAva.get(counter).equals(s)) {
                 spacesAva.remove(counter);
                 found = true;
             }
@@ -299,12 +275,12 @@ public class Board {
 
     //checks for available spaces that are no longer valid and removes them
     //USE FOR FORWARD CHECKING, WILL NEED TO BE ADVANCED
-    public void updateAvailableSpaces(){
+    public void updateAvailableSpaces() {
         //remove a space if it has a bulb lighting it
         Space currSpace;
         for (int i = 0; i < spacesAva.size(); i++) {
             currSpace = spacesAva.get(i);
-            if (layout[currSpace.getX()][currSpace.getY()] instanceof LitSpace){
+            if (layout[currSpace.getX()][currSpace.getY()] instanceof LitSpace) {
                 spacesAva.remove(i);
                 i--;
             }
@@ -317,19 +293,19 @@ public class Board {
             currSpace = wallLocations.get(i);
             currX = currSpace.getX();
             currY = currSpace.getY();
-            wallVal = ((Wall)layout[currX][currY]).getWallNum();
-            if (wallVal<=this.getNumBulbsAroundWall(currSpace)){
-                if (currX-1>0 && layout[currX-1][currY]instanceof UnlitSpace){
-                    removeAvailableSpace(new Space(currX-1, currY));
+            wallVal = ((Wall) layout[currX][currY]).getWallNum();
+            if (wallVal <= this.getNumBulbsAroundWall(currSpace)) {
+                if (currX - 1 > 0 && layout[currX - 1][currY] instanceof UnlitSpace) {
+                    removeAvailableSpace(new Space(currX - 1, currY));
                 }
-                if (currX+1<layout.length && layout[currX+1][currY] instanceof UnlitSpace){
-                    removeAvailableSpace(new Space(currX+1, currY));
+                if (currX + 1 < layout.length && layout[currX + 1][currY] instanceof UnlitSpace) {
+                    removeAvailableSpace(new Space(currX + 1, currY));
                 }
-                if (currY-1>0 && layout[currX][currY-1] instanceof UnlitSpace){
-                    removeAvailableSpace(new Space(currX, currY-1));
+                if (currY - 1 > 0 && layout[currX][currY - 1] instanceof UnlitSpace) {
+                    removeAvailableSpace(new Space(currX, currY - 1));
                 }
-                if (currY+1<layout[currX].length && layout[currX][currY+1] instanceof UnlitSpace){
-                    removeAvailableSpace(new Space(currX+1, currY));
+                if (currY + 1 < layout[currX].length && layout[currX][currY + 1] instanceof UnlitSpace) {
+                    removeAvailableSpace(new Space(currX + 1, currY));
                 }
             }
         }//end wall space removal
@@ -337,41 +313,41 @@ public class Board {
 
     //puts a b on a space to represent a bulb(necessary for removal of available spaces next to filled walls)
     //USE FOR FORWARD CHECKING
-    public void placeBulb(Space nowBulb){
-        if (layout[nowBulb.getX()][nowBulb.getY()] instanceof UnlitSpace){
+    public void placeBulb(Space nowBulb) {
+        if (layout[nowBulb.getX()][nowBulb.getY()] instanceof UnlitSpace) {
             layout[nowBulb.getX()][nowBulb.getY()] = new Bulb(nowBulb.getX(), nowBulb.getY());
         }
     }
 
-    public void solveGuaranteedBulbs(){
+    public void solveGuaranteedBulbs() {
         int counter = 0;
-        Space currWall;
+        Wall currWall;
         int currX, currY;
         int currChar;
         Space tempSpace;
-        while (counter<this.wallLocations.size()){
+        while (counter < this.wallLocations.size()) {
             currWall = this.wallLocations.get(counter);
             currX = currWall.getX();
             currY = currWall.getY();
-            currChar =((Wall)currWall).getWallNum();
-            if (currChar !=0) {
+            currChar = currWall.getWallNum();
+            if (currChar != 0) {
                 if (currChar == 4) {
-                    if (!(layout[currX+1][currY] instanceof Bulb)) {
+                    if (!(layout[currX + 1][currY] instanceof Bulb)) {
                         tempSpace = new Space(currX + 1, currY);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (!(layout[currX-1][currY] instanceof Bulb)) {
+                    if (!(layout[currX - 1][currY] instanceof Bulb)) {
                         tempSpace = new Space(currX - 1, currY);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (!(layout[currX][currY+1] instanceof Bulb)) {
+                    if (!(layout[currX][currY + 1] instanceof Bulb)) {
                         tempSpace = new Space(currX, currY + 1);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
                     }
-                    if (!(layout[currX][currY-1] instanceof Bulb)) {
+                    if (!(layout[currX][currY - 1] instanceof Bulb)) {
                         tempSpace = new Space(currX, currY - 1);
                         this.placeBulb(tempSpace);
                         this.lightSpace(tempSpace);
@@ -403,14 +379,15 @@ public class Board {
         }
     }
 
-    public boolean isWall(int x, int y){
+    public boolean isWall(int x, int y) {
         boolean isWall = false;
-        if (x>=0 && x < layout.length && y>=0 && y<layout[0].length){
+        if (x >= 0 && x < layout.length && y >= 0 && y < layout[0].length) {
             isWall = layout[x][y] instanceof Wall;
         }
         return isWall;
     }
-    public boolean checkIfSpaceisWIthinBoardBounds(int x, int y){
-        return x>=0 && x<layout.length && y>=0 && y<layout[x].length;
+
+    public boolean checkIfSpaceisWIthinBoardBounds(int x, int y) {
+        return x >= 0 && x < layout.length && y >= 0 && y < layout[x].length;
     }
 }
