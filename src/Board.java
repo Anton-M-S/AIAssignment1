@@ -168,7 +168,7 @@ public class Board {
         boolean noWall = true;
         int counter = colNum - 1;
         while (noWall && counter >= 0) {
-            noWall = lightUpFromBulb(rowNum,counter, noWall);
+            noWall = lightUpFromBulb(rowNum, counter, noWall);
 
             counter -= 1;
         }
@@ -176,7 +176,7 @@ public class Board {
         counter = colNum + 1;
         while (noWall && counter < this.layout[rowNum].length) {
 
-            noWall = lightUpFromBulb(rowNum,counter, noWall);
+            noWall = lightUpFromBulb(rowNum, counter, noWall);
 
             counter += 1;
         }
@@ -186,20 +186,20 @@ public class Board {
         boolean noWall = true;
         int counter = rowNum - 1;
         while (noWall && counter >= 0) {
-            noWall = lightUpFromBulb(counter,colNum, noWall);
+            noWall = lightUpFromBulb(counter, colNum, noWall);
             counter -= 1;
         }
         noWall = true;
         counter = rowNum + 1;
         while (noWall && counter < this.layout.length) {
 
-            noWall = lightUpFromBulb(counter,colNum, noWall);
+            noWall = lightUpFromBulb(counter, colNum, noWall);
 
             counter += 1;
         }
     }
 
-    private boolean lightUpFromBulb(int x, int y, boolean noWall){
+    private boolean lightUpFromBulb(int x, int y, boolean noWall) {
         if (this.getPosition(x, y) instanceof Wall) {
             noWall = false;
         } else {
@@ -207,6 +207,7 @@ public class Board {
         }
         return noWall;
     }
+
     public boolean validatePartialSolution(ArrayList<Space> bulbLocations) {
         return this.areBulbsValid(bulbLocations) && this.areWallsValid();
     }
@@ -357,25 +358,30 @@ public class Board {
                             (currX + 1 >= layout.length || currX - 1 < 0 || currY + 1 >= layout[currX].length || currY - 1 < 0
                                     || isWall(currX + 1, currY) || isWall(currX - 1, currY)
                                     || isWall(currX, currY - 1) || isWall(currX, currY + 1))) {
-                        for (int i = -1; i <= 1; i++) {
-                            for (int j = -1; j <= 1; j++) {
-                                if (i == 0 || j == 0) {
-                                    if ((currX + i < layout.length && currX + i >= 0
-                                            && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
-                                        if (!(layout[currX + i][currY + j] instanceof Bulb)) {
-                                            tempSpace = new Space(currX + i, currY + j);
-                                            this.placeBulb(tempSpace);
-                                            this.lightSpace(tempSpace);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        placeBulbsAroundWall(currX, currY);
                     }
                 }
             }
 
             counter++;
+        }
+    }
+
+    private void placeBulbsAroundWall(int currX, int currY) {
+        Space tempSpace;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 || j == 0) {
+                    if ((currX + i < layout.length && currX + i >= 0
+                            && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
+                        if (!(layout[currX + i][currY + j] instanceof Bulb)) {
+                            tempSpace = new Space(currX + i, currY + j);
+                            this.placeBulb(tempSpace);
+                            this.lightSpace(tempSpace);
+                        }
+                    }
+                }
+            }
         }
     }
 
