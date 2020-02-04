@@ -50,7 +50,7 @@ public class Main {
                     }
 
 
-                    board = new Board(newBoard, new ArrayList<Space>(), new ArrayList<Space>());
+                    board = new Board(newBoard, new ArrayList<>(), new ArrayList<>());
                     board.spacesAva = setWallSpaces(newBoard);
 
                     //board.setAvailableSpacesToAllBlanks();
@@ -76,7 +76,7 @@ public class Main {
     }
 
 
-    public static Board BTRecursive(Board board, Space nextBulb, boolean isPartial) {
+    private static Board BTRecursive(Board board, Space nextBulb, boolean isPartial) {
         //  System.out.println(i++);
         Board newBoard = new Board(board);
         if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
@@ -180,8 +180,8 @@ public class Main {
 
 
 
-    public static ArrayList<Space> setWallSpaces(Space[][] layout) {
-        ArrayList<Space> returnList = new ArrayList<Space>();
+    private static ArrayList<Space> setWallSpaces(Space[][] layout) {
+        ArrayList<Space> returnList = new ArrayList<>();
         Space builderSpace;
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[0].length; j++) {
