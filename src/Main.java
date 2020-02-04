@@ -45,8 +45,12 @@ public class Main {
 
                     board = new Board(newBoard, new ArrayList<Space>(), new ArrayList<Space>());
                     board.spacesAva = setWallSpaces(newBoard);
+
+                    //board.setAvailableSpacesToAllBlanks();
                     System.out.println(board);//call Search functions from this line
-     //               BT(board.spacesAva, board.layout, false);
+                  // BT(board.spacesAva, board.layout, false);
+                    board.solveGuaranteedBulbs();
+                    System.out.println("BT Start");
                     Board result = BTRecursive(board, null, false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
@@ -70,16 +74,16 @@ public class Main {
         boolean partial = isPartial;//remember the state of whether or not teh backtrack began as a partial solution
         Board newBoard = new Board(board);
         if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
-            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            //newBoard.placeBulb(nextBulb);//place the next bulb on teh board
             newBoard.lightSpace(nextBulb);//
         }
-        newBoard.updateAvailableSpaces();//remove invalid spaces from available
+       // newBoard.updateAvailableSpaces();//remove invalid spaces from available
 
 
         Board tempBoard = null;
 
         if (newBoard.isBoardValid(newBoard.spacesLit)) {//if it is a fully valid board
-            //System.out.println(newBoard);
+            System.out.println(newBoard);
             return newBoard;//return it
         } else {
             if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
