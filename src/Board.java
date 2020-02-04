@@ -261,11 +261,12 @@ public class Board {
     }
 
     //moves a lit space from spaces ava to spacesLit
+    //MAY NEED TO WRITE A NEW VERSION FOR FORWARD CHECKING THAT CKECLS IF THE SPACE IS LIT
     public void lightSpace(Space toLight){
         Space temp;
         boolean found = false;
         int counter = 0;
-        if (layout[toLight.getX()][toLight.getY()]!='L') {
+        //if (layout[toLight.getX()][toLight.getY()]!='L') {
             while (counter < this.spacesAva.size() && !found) {
                 temp = spacesAva.get(counter);
                 if (temp.equals(toLight)) {
@@ -275,7 +276,7 @@ public class Board {
                 }
                 counter++;
             }
-        }
+        //}
     }
 
     //removes a space from spaces available
@@ -292,6 +293,7 @@ public class Board {
     }
 
     //checks for available spaces that are no longer valid and removes them
+    //USE FOR FORWARD CHECKING, WILL NEED TO BE ADVANCED
     public void updateAvailableSpaces(){
         //remove a space if it has a bulb lighting it
         Space currSpace;
@@ -329,9 +331,81 @@ public class Board {
     }
 
     //puts a b on a space to represent a bulb(necessary for removal of available spaces next to filled walls)
+    //USE FOR FORWARD CHECKING
     public void placeBulb(Space nowBulb){
         if (layout[nowBulb.getX()][nowBulb.getY()]=='_'){
             layout[nowBulb.getX()][nowBulb.getY()] = 'b';
         }
+    }
+
+    public void solveGuaranteedBulbs(){
+        int counter = 0;
+        Space currWall;
+        int currX, currY;
+        char currChar;
+        Space tempSpace;
+        while (counter<this.wallLocations.size()){
+            currWall = this.wallLocations.get(counter);
+            currX = currWall.getX();
+            currY = currWall.getY();
+            currChar = layout[currX][currY];
+            if (currChar !=0) {
+                if (currChar == '4') {
+                    if (layout[currX+1][currY]!='b') {
+                        tempSpace = new Space(currX + 1, currY);
+                        this.placeBulb(tempSpace);
+                        this.lightSpace(tempSpace);
+                    }
+                    if (layout[currX-1][currY]!='b') {
+                        tempSpace = new Space(currX - 1, currY);
+                        this.placeBulb(tempSpace);
+                        this.lightSpace(tempSpace);
+                    }
+                    if (layout[currX][currY+1]!='b') {
+                        tempSpace = new Space(currX, currY + 1);
+                        this.placeBulb(tempSpace);
+                        this.lightSpace(tempSpace);
+                    }
+                    if (layout[currX][currY-1]!='b') {
+                        tempSpace = new Space(currX, currY - 1);
+                        this.placeBulb(tempSpace);
+                        this.lightSpace(tempSpace);
+                    }
+                } else {
+                    if (currChar == '3' &&
+                            (currX + 1 >= layout.length || currX - 1 < 0 || currY + 1 >= layout[currX].length || currY - 1 < 0
+                                    || isWall(currX + 1, currY) || isWall(currX - 1, currY)
+                                    || isWall(currX, currY - 1) || isWall(currX, currY + 1))) {
+                        for (int i = -1; i <= 1; i++) {
+                            for (int j = -1; j <= 1; j++) {
+                                if (i == 0 || j == 0) {
+                                    if ((currX + i < layout.length && currX + i >= 0
+                                            && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
+                                        if (layout[currX + i][currY + j] != 'b') {
+                                            tempSpace = new Space(currX + i, currY + j);
+                                            this.placeBulb(tempSpace);
+                                            this.lightSpace(tempSpace);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            counter++;
+        }
+    }
+
+    public boolean isWall(int x, int y){
+        boolean isWall = false;
+        if (x>=0 && x < layout.length && y>=0 && y<layout[0].length){
+            isWall = Character.isDigit(layout[x][y]);
+        }
+        return isWall;
+    }
+    public boolean checkIfSpaceisWIthinBoardBounds(int x, int y){
+        return x>=0 && x<layout.length && y>=0 && y<layout[x].length;
     }
 }
