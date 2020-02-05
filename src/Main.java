@@ -58,8 +58,8 @@ public class Main {
                   // BT(board.spacesAva, board.layout, false);
                     board.solveGuaranteedBulbs();
                     System.out.println("BT Start");
-                    Board result = BTRecursive(board, null, false);
-                    //Board result = ForwardTrackingCP(board,null,false);
+                    //Board result = BTRecursive(board, null, false);
+                    Board result = ForwardTrackingCP(board,null,false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
@@ -129,7 +129,7 @@ public class Main {
         //  System.out.println(i++);
         Board newBoard = new Board(board);
         if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
-            //newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
             newBoard.lightSpace(nextBulb);//
             boolean didChange = true;
             while (didChange){
@@ -150,7 +150,7 @@ public class Main {
             if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
                 // System.out.println(newBoard);
                 newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
-                Board partialSol = BTRecursive(newBoard, null, true);
+                Board partialSol = ForwardTrackingCP(newBoard, null, true);
                 if (partialSol != null) {//if the solution found on the previous line was valid, return it
                     //this works because the only place that returns anything other than null is if there is
                     //a complete solution
@@ -163,7 +163,7 @@ public class Main {
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
                     while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                        tempBoard = BTRecursive(newBoard, availSpaces.get(counter), isPartial);
+                        tempBoard = ForwardTrackingCP(newBoard, availSpaces.get(counter), isPartial);
                         if (tempBoard == null){
                             newBoard.spacesAva.remove(counter);
                             counter--;
