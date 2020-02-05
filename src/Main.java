@@ -59,6 +59,7 @@ public class Main {
                     board.solveGuaranteedBulbs();
                     System.out.println("BT Start");
                     Board result = BTRecursive(board, null, false);
+                    //Board result = ForwardTrackingCP(board,null,false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
@@ -79,6 +80,9 @@ public class Main {
     private static Board BTRecursive(Board board, Space nextBulb, boolean isPartial) {
         //  System.out.println(i++);
         Board newBoard = new Board(board);
+//        System.out.println(nextBulb);
+//        System.out.println(isPartial);
+//        System.out.println(newBoard);
         if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
             //newBoard.placeBulb(nextBulb);//place the next bulb on teh board
             newBoard.lightSpace(nextBulb);//
@@ -109,6 +113,61 @@ public class Main {
                     //tempboard will always be null, unless it is returned a fully valid solution
                     while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
                         tempBoard = BTRecursive(newBoard, availSpaces.get(counter), isPartial);
+                        if (tempBoard == null){
+                            newBoard.spacesAva.remove(counter);
+                            counter--;
+                        }
+                        counter++;
+                    }
+                }
+            }
+        }
+        return tempBoard;
+    }
+
+    private static Board ForwardTrackingCP(Board board, Space nextBulb, boolean isPartial) {
+        //  System.out.println(i++);
+        Board newBoard = new Board(board);
+        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
+            //newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.lightSpace(nextBulb);//
+            boolean didChange = true;
+            while (didChange){
+                didChange = newBoard.solveGuaranteedBulbs();
+                newBoard.updateAvailableSpaces();//remove invalid spaces from available
+            }
+        }
+
+
+
+
+        Board tempBoard = null;
+
+        if (newBoard.isBoardValid(newBoard.spacesLit)) {//if it is a fully valid board
+            System.out.println(newBoard);
+            return newBoard;//return it
+        } else {
+            if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
+                // System.out.println(newBoard);
+                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
+                Board partialSol = BTRecursive(newBoard, null, true);
+                if (partialSol != null) {//if the solution found on the previous line was valid, return it
+                    //this works because the only place that returns anything other than null is if there is
+                    //a complete solution
+                    return partialSol;
+                }
+            } else {
+                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
+                if (newBoard.areBulbsValid(newBoard.spacesLit) && !newBoard.areWallsOverloaded()) {
+                    ArrayList<Space> availSpaces = newBoard.spacesAva;
+                    int counter = 0;
+                    //tempboard will always be null, unless it is returned a fully valid solution
+                    while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
+                        tempBoard = BTRecursive(newBoard, availSpaces.get(counter), isPartial);
+                        if (tempBoard == null){
+                            newBoard.spacesAva.remove(counter);
+                            counter--;
+                        }
                         counter++;
                     }
                 }
