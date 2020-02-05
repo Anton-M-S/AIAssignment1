@@ -334,7 +334,7 @@ public class Board {
             currChar = currWall.getWallNum();
             if (currChar != 0) {
                 bulbsNeeded = countNumBulbsNeeded(currX, currY);
-                if (bulbsNeeded == currChar) {
+                if (bulbsNeeded == currChar && getNumBulbsAroundWall(currWall) != currChar) {
                     placeBulbsAroundWall(currX,currY);
                     madeChange = true;
                     //checkForWallsNeedingFourBulbs(currX, currY);
