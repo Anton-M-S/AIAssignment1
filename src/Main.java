@@ -22,7 +22,9 @@ public class Main {
             while (fileScan.hasNext()) {
                 if (currline.charAt(0) == '#') {
                     if (isStart) {
-                        currline = fileScan.nextLine();
+                        while (currline.charAt(0) == '#') {
+                            currline = fileScan.nextLine();
+                        }
                         isStart = false;
                         dimensions = currline.split(" ");
                         x = Integer.parseInt(dimensions[0]);
@@ -138,9 +140,6 @@ public class Main {
                 newBoard.updateAvailableSpaces();//remove invalid spaces from available
             }
         }
-
-
-
 
         Board tempBoard = null;
 
