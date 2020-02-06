@@ -53,9 +53,15 @@ public class Board {
 
     public String toString() {
         String toReturn = "";
+        Space currSpace;
         for (int i = 0; i < layout.length; i++) {
             for (int j = 0; j < layout[i].length; j++) {
-                toReturn += layout[i][j].getSpaceType();
+                currSpace = layout[i][j];
+                if (currSpace instanceof LitSpace) {
+                    toReturn += "_";
+                } else {
+                    toReturn += currSpace.getSpaceType();
+                }
             }
             toReturn += '\n';
         }
@@ -86,8 +92,8 @@ public class Board {
             currSpace = bulbSpaces.get(counter);
             if (!(this.getPosition(currSpace.getX(), currSpace.getY()) instanceof LitSpace)) {
                 this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));
-                this.isRowValid(currSpace.getX(), currSpace.getY());
-                this.isColValid(currSpace.getX(), currSpace.getY());
+                this.LightUpRow(currSpace.getX(), currSpace.getY());
+                this.LightUpColumn(currSpace.getX(), currSpace.getY());
             } else {
                 valid = false;
             }
@@ -133,15 +139,12 @@ public class Board {
 
         while (overloaded && counter < wallLocations.size()) {
             currSpace = wallLocations.get(counter);
-            //currChar = this.getPosition(currX,currY);
-            // if (currSpace instanceof Wall){
             currWallNum = currSpace.getWallNum();
             numBulbs = this.getNumBulbsAroundWall(currSpace);
 
             if (numBulbs <= currWallNum) {
                 overloaded = false;
             }
-            //  }
             counter++;
         }
         return overloaded;
@@ -164,11 +167,11 @@ public class Board {
         return numBulbs;
     }
 
-    public void isRowValid(int rowNum, int colNum) {
+    public void LightUpRow(int rowNum, int colNum) {
             boolean noWall = true;
             int counter = colNum - 1;
             while (noWall && counter >= 0) {
-                noWall = lightUpFromBulb(rowNum, counter, noWall);
+                noWall = lightUpFromBulb(rowNum, counter);
 
                 counter -= 1;
             }
@@ -176,30 +179,31 @@ public class Board {
             counter = colNum + 1;
             while (noWall && counter < this.layout[rowNum].length) {
 
-                noWall = lightUpFromBulb(rowNum, counter, noWall);
+                noWall = lightUpFromBulb(rowNum, counter);
 
                 counter += 1;
             }
     }
 
-    public void isColValid(int rowNum, int colNum) {
+    public void LightUpColumn(int rowNum, int colNum) {
             boolean noWall = true;
             int counter = rowNum - 1;
             while (noWall && counter >= 0) {
-                noWall = lightUpFromBulb(counter, colNum, noWall);
+                noWall = lightUpFromBulb(counter, colNum);
                 counter -= 1;
             }
             noWall = true;
             counter = rowNum + 1;
             while (noWall && counter < this.layout.length) {
 
-                noWall = lightUpFromBulb(counter, colNum, noWall);
+                noWall = lightUpFromBulb(counter, colNum);
 
                 counter += 1;
             }
     }
 
-    private boolean lightUpFromBulb(int x, int y, boolean noWall) {
+    private boolean lightUpFromBulb(int x, int y) {
+        boolean noWall = true;
         if (this.getPosition(x, y) instanceof Wall) {
             noWall = false;
         } else {
@@ -296,13 +300,13 @@ public class Board {
             currY = currSpace.getY();
             wallVal = ((Wall) layout[currX][currY]).getWallNum();
             if (wallVal <= this.getNumBulbsAroundWall(currSpace)) {
-                if (currX - 1 > 0 && layout[currX - 1][currY] instanceof UnlitSpace) {
+                if (currX - 1 >= 0 && layout[currX - 1][currY] instanceof UnlitSpace) {
                     removeAvailableSpace(new Space(currX - 1, currY));
                 }
                 if (currX + 1 < layout.length && layout[currX + 1][currY] instanceof UnlitSpace) {
                     removeAvailableSpace(new Space(currX + 1, currY));
                 }
-                if (currY - 1 > 0 && layout[currX][currY - 1] instanceof UnlitSpace) {
+                if (currY - 1 >= 0 && layout[currX][currY - 1] instanceof UnlitSpace) {
                     removeAvailableSpace(new Space(currX, currY - 1));
                 }
                 if (currY + 1 < layout[currX].length && layout[currX][currY + 1] instanceof UnlitSpace) {
@@ -339,15 +343,6 @@ public class Board {
                     madeChange = true;
                     //checkForWallsNeedingFourBulbs(currX, currY);
                 }
-//                else {
-//                    if (bulbsNeeded == 3) {
-//                        checkForWallsNeedingThreeBulbs(currX, currY);
-//                    } else {
-//                        if (bulbsNeeded == 2) {
-//                            checkForWallsNeedingTwoBulbs(currX, currY);
-//                        }
-//                    }
-//                }
             }
 
             counter++;
@@ -386,8 +381,8 @@ public class Board {
                             tempSpace = new Space(currX + i, currY + j);
                             this.placeBulb(tempSpace);
                             this.lightSpace(tempSpace);
-                            this.isRowValid(tempSpace.getX(), tempSpace.getY());
-                            this.isColValid(tempSpace.getX(), tempSpace.getY());
+                            this.LightUpRow(tempSpace.getX(), tempSpace.getY());
+                            this.LightUpColumn(tempSpace.getX(), tempSpace.getY());
                         }
                     }
                 }
@@ -403,7 +398,4 @@ public class Board {
         return isWall;
     }
 
-    public boolean checkIfSpaceisWIthinBoardBounds(int x, int y) {
-        return x >= 0 && x < layout.length && y >= 0 && y < layout[x].length;
-    }
 }
