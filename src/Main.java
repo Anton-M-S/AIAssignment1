@@ -95,11 +95,11 @@ public class Main {
 
         Board tempBoard = null;
 
-        if (newBoard.isBoardValid(newBoard.spacesLit)) {//if it is a fully valid board
+        if (newBoard.isBoardValid()) {//if it is a fully valid board
             System.out.println(newBoard);
             return newBoard;//return it
         } else {
-            if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
+            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
                // System.out.println(newBoard);
                 newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
                 Board partialSol = BTRecursive(newBoard, null, true);
@@ -110,7 +110,7 @@ public class Main {
                 }
             } else {
                 //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
-                if (newBoard.areBulbsValid(newBoard.spacesLit) && !newBoard.areWallsOverloaded()) {
+                if (newBoard.areBulbsValid() && !newBoard.areWallsOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
@@ -143,11 +143,11 @@ public class Main {
 
         Board tempBoard = null;
 
-        if (newBoard.isBoardValid(newBoard.spacesLit)) {//if it is a fully valid board
+        if (newBoard.isBoardValid()) {//if it is a fully valid board
             System.out.println(newBoard);
             return newBoard;//return it
         } else {
-            if (!isPartial && newBoard.validatePartialSolution(newBoard.spacesLit)) {//if a partial solution
+            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
                 // System.out.println(newBoard);
                 newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
                 Board partialSol = ForwardTrackingCP(newBoard, null, true);
@@ -158,7 +158,7 @@ public class Main {
                 }
             } else {
                 //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
-                if (newBoard.areBulbsValid(newBoard.spacesLit) && !newBoard.areWallsOverloaded()) {
+                if (newBoard.areBulbsValid() && !newBoard.areWallsOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
