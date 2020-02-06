@@ -77,21 +77,26 @@ public class Board {
         layout[newSpace.getX()][newSpace.getY()] = newSpace;
     }
 
+    //checks that all bulbs are not lighting other bulbs, that all walls have correct number of
+    //bulbs, and that there are no unlit spaces
     public boolean isBoardValid() {
-        return this.checkForUnlitSpaces() && this.areBulbsValid() && this.areWallsValid();
+        return  this.areBulbsValid() && this.areWallsValid() && this.checkForUnlitSpaces();
     }
 
+    //checks to make sure no bulbs are lighting other bulbs
     public boolean areBulbsValid() {
         boolean valid = true;
         int counter = 0;
         Space currSpace;
+        //while no validation errors have been found, and we still have bulbs to check
         while (valid && counter < this.spacesLit.size()) {
             currSpace = spacesLit.get(counter);
+            //if the space is not already lit
             if (!(this.getPosition(currSpace.getX(), currSpace.getY()) instanceof LitSpace)) {
-                this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));
-                this.LightUpRow(currSpace.getX(), currSpace.getY());
-                this.LightUpColumn(currSpace.getX(), currSpace.getY());
-            } else {
+                this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));//change the space to a bulb
+                this.LightUpRow(currSpace.getX(), currSpace.getY());//light up the rows and and columns
+                this.LightUpColumn(currSpace.getX(), currSpace.getY());//associated with the bulb
+            } else {//otherwise the board is not valid
                 valid = false;
             }
             counter += 1;
@@ -99,21 +104,22 @@ public class Board {
         return valid;
     }
 
+
+    //checks to see if the walls have the correct number of bulbs
     public boolean areWallsValid() {
         int counter = 0;
         int numBulbs;
         int currWallNum;
         boolean valid = true;
         Wall currSpace;
-        //Space currChar;
-
+        //while all walls are valid and we have walls left to check
         while (valid && counter < wallLocations.size()) {
             currSpace = wallLocations.get(counter);
 
-            currWallNum = currSpace.getWallNum();
+            currWallNum = currSpace.getWallNum();//get the number on teh wall
 
-            numBulbs = this.getNumBulbsAroundWall(currSpace);
-            if (numBulbs != currWallNum) {
+            numBulbs = this.getNumBulbsAroundWall(currSpace);//counts bulbs aroun teh wall
+            if (numBulbs != currWallNum) {//if they d not match
                 valid = false;
             }
             counter++;
@@ -121,25 +127,22 @@ public class Board {
         return valid;
     }
 
+    //specifically checks if any walls have too many bulbs (i.e. cannot be made valid)
     public boolean areWallsOverloaded() {
         int counter = 0;
         int numBulbs;
         int currWallNum;
         boolean overloaded = true;
         Wall currSpace;
-        if (wallLocations.size()==0){
-            overloaded = false;
-        }else {
-            while (overloaded && counter < wallLocations.size()) {
-                currSpace = wallLocations.get(counter);
-                currWallNum = currSpace.getWallNum();
-                numBulbs = this.getNumBulbsAroundWall(currSpace);
+        while (overloaded && counter < wallLocations.size()) {
+            currSpace = wallLocations.get(counter);
+            currWallNum = currSpace.getWallNum();
+            numBulbs = this.getNumBulbsAroundWall(currSpace);
 
-                if (numBulbs <= currWallNum) {
-                    overloaded = false;
-                }
-                counter++;
+            if (numBulbs > currWallNum) {
+                overloaded = false;
             }
+            counter++;
         }
         return overloaded;
     }
@@ -327,10 +330,11 @@ public class Board {
         int bulbsNeeded;
         while (counter < this.wallLocations.size()) {
             currWall = this.wallLocations.get(counter);
+            currChar = currWall.getWallNum();
+
+            if (currChar != 0) {
             currX = currWall.getX();
             currY = currWall.getY();
-            currChar = currWall.getWallNum();
-            if (currChar != 0) {
                 bulbsNeeded = countNumBulbsNeeded(currX, currY);
                 if (bulbsNeeded == currChar && getNumBulbsAroundWall(currWall) != currChar) {
                     placeBulbsAroundWall(currX,currY);
