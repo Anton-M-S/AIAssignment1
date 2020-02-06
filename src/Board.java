@@ -136,16 +136,19 @@ public class Board {
         int currWallNum;
         boolean overloaded = true;
         Wall currSpace;
+        if (wallLocations.size()==0){
+            overloaded = false;
+        }else {
+            while (overloaded && counter < wallLocations.size()) {
+                currSpace = wallLocations.get(counter);
+                currWallNum = currSpace.getWallNum();
+                numBulbs = this.getNumBulbsAroundWall(currSpace);
 
-        while (overloaded && counter < wallLocations.size()) {
-            currSpace = wallLocations.get(counter);
-            currWallNum = currSpace.getWallNum();
-            numBulbs = this.getNumBulbsAroundWall(currSpace);
-
-            if (numBulbs <= currWallNum) {
-                overloaded = false;
+                if (numBulbs <= currWallNum) {
+                    overloaded = false;
+                }
+                counter++;
             }
-            counter++;
         }
         return overloaded;
     }
