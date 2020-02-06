@@ -53,7 +53,7 @@ public class Main {
 
 
                     board = new Board(newBoard, new ArrayList<>(), new ArrayList<>());
-                    board.spacesAva = setWallSpaces(newBoard);
+                   // board.spacesAva = setWallSpaces(newBoard);
                     if (board.spacesAva.size()==0){
                         board.setAvailableSpacesToAllBlanks();
                     }
@@ -61,8 +61,8 @@ public class Main {
                     System.out.println(board);//call Search functions from this line
                     board.solveGuaranteedBulbs();
                     System.out.println("BT Start");
-                    //Board result = BTRecursive(board, null, false);
-                    Board result = ForwardTrackingCP(board,null,false);
+                    Board result = BTRecursive(board, null, false);
+                    //Board result = ForwardTrackingCP(board,null,false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
@@ -110,7 +110,7 @@ public class Main {
                 }
             } else {
                 //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
-                if (newBoard.areBulbsValid() && !newBoard.areWallsOverloaded()) {
+                if (newBoard.areBulbsValid() && newBoard.areWallsOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
@@ -158,7 +158,7 @@ public class Main {
                 }
             } else {
                 //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
-                if (newBoard.areBulbsValid() && !newBoard.areWallsOverloaded()) {
+                if (newBoard.areBulbsValid() && newBoard.areWallsOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
