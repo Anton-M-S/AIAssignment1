@@ -52,10 +52,11 @@ public class Main {
 
                     board = new Board(newBoard, new ArrayList<>(), new ArrayList<>());
                     board.spacesAva = setWallSpaces(newBoard);
-
+                    if (board.spacesAva.size()==0){
+                        board.setAvailableSpacesToAllBlanks();
+                    }
                     //board.setAvailableSpacesToAllBlanks();
                     System.out.println(board);//call Search functions from this line
-                  // BT(board.spacesAva, board.layout, false);
                     board.solveGuaranteedBulbs();
                     System.out.println("BT Start");
                     //Board result = BTRecursive(board, null, false);
