@@ -79,7 +79,7 @@
          testList.add(new Space(0,0));
          testList.add(new Space(0,2));
          singleLine = new Board(testBoard, new ArrayList<Space>(), testList);
-         assertFalse(singleLine.areBulbsValid(testList));
+         assertFalse(singleLine.areBulbsValid());
      }
 
      @Test
@@ -94,7 +94,7 @@
          testList.add(new Space(0,0));
          testList.add(new Space(0,4));
          singleLine = new Board(testBoard, new ArrayList<Space>(), testList);
-         assertTrue(singleLine.areBulbsValid(testList));
+         assertTrue(singleLine.areBulbsValid());
        }
 //
      @Test
@@ -146,7 +146,7 @@
          testList.add(new Space(1,0));
          testList.add(new Space(1,2));
          singleLine = new Board(testBoard, new ArrayList<>(), testList);
-         assertTrue(singleLine.validatePartialSolution(testList));
+         assertTrue(singleLine.validatePartialSolution());
      }
 //
      @Test
@@ -167,7 +167,7 @@
          testList.add(new Space(1,2));
          testList.add(new Space(2,0));
          singleLine = new Board(testBoard, new ArrayList<>(), testList);
-         assertFalse(singleLine.validatePartialSolution(testList));
+         assertFalse(singleLine.validatePartialSolution());
      }
 //
 //     @Test
