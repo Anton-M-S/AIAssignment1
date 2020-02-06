@@ -57,12 +57,11 @@ public class Main {
                     if (board.spacesAva.size()==0){
                         board.setAvailableSpacesToAllBlanks();
                     }
-                    //board.setAvailableSpacesToAllBlanks();
                     System.out.println(board);//call Search functions from this line
                     board.solveGuaranteedBulbs();
                     System.out.println("BT Start");
-                    Board result = BTRecursive(board, null, false);
-                    //Board result = ForwardTrackingCP(board,null,false);
+                    //Board result = BTRecursive(board, null, false);
+                    Board result = ForwardTrackingCP(board,null,false);
                     if (result == null) {
                         System.out.println("Backtrack failed");
                     } else {
