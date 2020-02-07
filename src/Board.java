@@ -299,7 +299,6 @@ public class Board {
     }
 
     //checks for available spaces that are no longer valid and removes them
-    //USE FOR FORWARD CHECKING, WILL NEED TO BE ADVANCED
     public void updateAvailableSpaces() {
         //remove a space if it has a bulb lighting it
         Space currSpace;
@@ -315,12 +314,14 @@ public class Board {
         int wallVal;
         int currX, currY;
         Wall currWall;
+        //removes unlit spaces next to walls that are already full
         for (int i = 0; i < wallLocations.size(); i++) {
             currWall = wallLocations.get(i);
             currX = currWall.getX();
             currY = currWall.getY();
             wallVal = ((Wall) layout[currX][currY]).getWallNum();
-            if (wallVal <= this.getNumBulbsAroundWall(currWall)) {
+            if (wallVal <= this.getNumBulbsAroundWall(currWall)) {//if the wall is overloaded, or has the right number of bulbs
+                //checks each space around the wall, removes it if unlit
                 if (currX - 1 >= 0 && layout[currX - 1][currY] instanceof UnlitSpace) {
                     removeAvailableSpace(new Space(currX - 1, currY));
                 }
@@ -338,30 +339,31 @@ public class Board {
     }
 
     //puts a b on a space to represent a bulb(necessary for removal of available spaces next to filled walls)
-    //USE FOR FORWARD CHECKING
     public void placeBulb(Space nowBulb) {
         if (layout[nowBulb.getX()][nowBulb.getY()] instanceof UnlitSpace) {
             layout[nowBulb.getX()][nowBulb.getY()] = new Bulb(nowBulb.getX(), nowBulb.getY());
         }
     }
 
+    //solves cases where bulbs must be placed
     public boolean solveGuaranteedBulbs() {
-        boolean madeChange = false;
+        boolean madeChange = false;//becomes true if a change has been made, used in loop for forward checking
         int counter = 0;
         Wall currWall;
         int currX, currY;
         int currChar;
         int bulbsNeeded;
+        //check all walls
         while (counter < this.wallLocations.size()) {
             currWall = this.wallLocations.get(counter);
             currChar = currWall.getWallNum();
 
-            if (currChar != 0) {
+            if (currChar != 0) {//not a zero wall
             currX = currWall.getX();
             currY = currWall.getY();
-                bulbsNeeded = countNumBulbsNeeded(currX, currY);
+                bulbsNeeded = countNumBulbsNeeded(currX, currY);//count the number of bulbs that the wall still needs beside it
                 if (bulbsNeeded == currChar && getNumBulbsAroundWall(currWall) != currChar) {
-                    placeBulbsAroundWall(currX,currY);
+                    placeBulbsAroundWall(currX,currY);//places bulbs on all available spaces around the wall
                     madeChange = true;
                     //checkForWallsNeedingFourBulbs(currX, currY);
                 }
@@ -372,11 +374,13 @@ public class Board {
         return madeChange;
     }
 
+    //counts the number of bulbs that a wall still needs
     private int countNumBulbsNeeded(int currX, int currY) {
-        int numUnavailable = 0;
+        int numUnavailable = 0;//counts the number of spaces that are not unlit or contain a bulb
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <=1; j++) {
                 if((i==0 || j==0) && (i!=0 || j!=0)){
+                    //if the space is within the bounds, and its not unlit or a bulb
                     if (currX+i>=0 && currX+i<layout.length && currY+j>=0 && currY+j<layout[0].length){
                         if (!(layout[currX+i][currY+j] instanceof UnlitSpace) && !(layout[currX+i][currY+j] instanceof Bulb)){
                             numUnavailable++;
@@ -392,6 +396,7 @@ public class Board {
 
 
 
+    //places bulbs in all empty spaces around a wall
     private void placeBulbsAroundWall(int currX, int currY) {
         Space tempSpace;
         for (int i = -1; i <= 1; i++) {

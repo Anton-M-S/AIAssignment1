@@ -67,7 +67,7 @@ public class Main {
                     } else {
                         System.out.println("BT passed");
                     }
-                    setWallSpaces(newBoard);
+                    //setWallSpaces(newBoard);
                     currline = fileScan.nextLine();
                 }
             }
