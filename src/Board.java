@@ -128,7 +128,7 @@ public class Board {
     }
 
     //specifically checks if any walls have too many bulbs (i.e. cannot be made valid)
-    public boolean areWallsOverloaded() {
+    public boolean wallsNotOverloaded() {
         int counter = 0;
         int numBulbs;
         int currWallNum;
@@ -137,9 +137,9 @@ public class Board {
         while (overloaded && counter < wallLocations.size()) {
             currSpace = wallLocations.get(counter);
             currWallNum = currSpace.getWallNum();
-            numBulbs = this.getNumBulbsAroundWall(currSpace);
+            numBulbs = this.getNumBulbsAroundWall(currSpace);//count bulbs around teh wall
 
-            if (numBulbs > currWallNum) {
+            if (numBulbs > currWallNum) {//if the wall has too many bulbs
                 overloaded = false;
             }
             counter++;
@@ -147,15 +147,17 @@ public class Board {
         return overloaded;
     }
 
-    private int getNumBulbsAroundWall(Space wall) {
+    //counts the number of bulbs around a wall
+    private int getNumBulbsAroundWall(Wall wall) {
         int currX = wall.getX();
         int currY = wall.getY();
         int numBulbs = 0;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
+                //i==0 || j==0 means it does not check diagonals
                 if ((i == 0 || j == 0) && ((currX + i) >= 0) && ((currY + j) >= 0)
                         && ((currX + i) < this.layout.length) && ((currY + j) < this.layout[0].length)) {
-                    if (this.getPosition(currX + i, currY + j) instanceof Bulb) {
+                    if (this.getPosition(currX + i, currY + j) instanceof Bulb) {//if the space being examined is a bulb
                         numBulbs += 1;
                     }
                 }
@@ -164,16 +166,19 @@ public class Board {
         return numBulbs;
     }
 
+    //after a bulb is placed, lights up the board row that the bulb is on
     public void LightUpRow(int rowNum, int colNum) {
             boolean noWall = true;
             int counter = colNum - 1;
-            while (noWall && counter >= 0) {
-                noWall = lightUpFromBulb(rowNum, counter);
+            //move backwards from teh bulb, towards zero
+            while (noWall && counter >= 0) {//as long as there is not a wall in teh way, and we aren't at the edge of the board
+                noWall = lightUpFromBulb(rowNum, counter);//lights the current spaceeee
 
                 counter -= 1;
             }
-            noWall = true;
+            noWall = true;//reset noWall
             counter = colNum + 1;
+            //move forwards from teh bulb to the edge of the board
             while (noWall && counter < this.layout[rowNum].length) {
 
                 noWall = lightUpFromBulb(rowNum, counter);
@@ -182,15 +187,18 @@ public class Board {
             }
     }
 
+    //after a bulb is placed, lights up the board row that the bulb is on
     public void LightUpColumn(int rowNum, int colNum) {
             boolean noWall = true;
             int counter = rowNum - 1;
+        //move backwards from teh bulb, towards zero
             while (noWall && counter >= 0) {
                 noWall = lightUpFromBulb(counter, colNum);
                 counter -= 1;
             }
             noWall = true;
             counter = rowNum + 1;
+        //move forwards from teh bulb to the edge of the board
             while (noWall && counter < this.layout.length) {
 
                 noWall = lightUpFromBulb(counter, colNum);
@@ -201,31 +209,47 @@ public class Board {
 
     private boolean lightUpFromBulb(int x, int y) {
         boolean noWall = true;
+        //if it is a wall, notify the caller
         if (this.getPosition(x, y) instanceof Wall) {
             noWall = false;
         } else {
-            this.updatePosition(new LitSpace(x, y));
+            this.updatePosition(new LitSpace(x, y));//otherwise, light the space
         }
         return noWall;
     }
 
+    //checks if a solution is partially valid
+    //this means that all walls have the correct number of bulbs, and no bulbs light other bulbs
+    //there may still be white spaces
     public boolean validatePartialSolution() {
         return this.areBulbsValid() && this.areWallsValid();
     }
 
+    //loops through the entire board, retuens false if it finds any unlit spcaes
     private boolean checkForUnlitSpaces() {
         boolean valid = true;
-        for (int i = 0; i < this.layout.length; i++) {
-            for (int j = 0; j < this.layout[i].length; j++) {
-                if (valid && layout[i][j] instanceof UnlitSpace) {
+        int counter = 0;
+        int counter2 = 0;
+        while (valid && counter<this.layout.length){
+            while (valid && counter2 < this.layout[counter].length) {
+                if (valid && layout[counter][counter2] instanceof UnlitSpace) {
                     valid = false;
                 }
+                counter2++;
             }
+            counter++;
         }
+//        for (int i = 0; i < layout.length; i++) {
+//            for (int j = 0; j < layout[i].length; j++) {
+//                if (valid && layout[i][j] instanceof UnlitSpace) {
+//                    valid = false;
+//                }
+//            }
+//        }
         return valid;
     }
 
-    //changed to return a list of white spaces instead of updating spacesAva
+    //loops through the board and creates a list of unlit spaces
     private ArrayList<Space> findWhiteSpaces() {
         ArrayList<Space> tempList = new ArrayList<>();
         for (int i = 0; i < layout.length; i++) {
@@ -238,13 +262,12 @@ public class Board {
         return tempList;
     }
 
-    //now the method to update spacesava
+    //the method to update spacesava to be all white spaces
     public void setAvailableSpacesToAllBlanks() {
         this.spacesAva = this.findWhiteSpaces();
     }
 
     //moves a lit space from spaces ava to spacesLit
-    //MAY NEED TO WRITE A NEW VERSION FOR FORWARD CHECKING THAT CKECLS IF THE SPACE IS LIT
     public void lightSpace(Space toLight) {
         Space temp;
         boolean found = false;
@@ -252,9 +275,9 @@ public class Board {
         //if (layout[toLight.getX()][toLight.getY()]!='L') {
         while (counter < this.spacesAva.size() && !found) {
             temp = spacesAva.get(counter);
-            if (temp.equals(toLight)) {
-                spacesLit.add(temp);
-                spacesAva.remove(counter);
+            if (temp.equals(toLight)) {//if the space is found
+                spacesLit.add(temp);//add it to lit spaces
+                spacesAva.remove(counter);//remove it from unlit
                 found = true;
             }
             counter++;
@@ -291,12 +314,13 @@ public class Board {
         //remove spaces adjacent to walls that are already full
         int wallVal;
         int currX, currY;
+        Wall currWall;
         for (int i = 0; i < wallLocations.size(); i++) {
-            currSpace = wallLocations.get(i);
-            currX = currSpace.getX();
-            currY = currSpace.getY();
+            currWall = wallLocations.get(i);
+            currX = currWall.getX();
+            currY = currWall.getY();
             wallVal = ((Wall) layout[currX][currY]).getWallNum();
-            if (wallVal <= this.getNumBulbsAroundWall(currSpace)) {
+            if (wallVal <= this.getNumBulbsAroundWall(currWall)) {
                 if (currX - 1 >= 0 && layout[currX - 1][currY] instanceof UnlitSpace) {
                     removeAvailableSpace(new Space(currX - 1, currY));
                 }
