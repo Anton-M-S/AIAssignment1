@@ -406,10 +406,10 @@ public class Board {
                             && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
                         if (!(layout[currX + i][currY + j] instanceof Bulb) && !(layout[currX + i][currY + j] instanceof LitSpace)) {
                             tempSpace = new Space(currX + i, currY + j);
-                            this.placeBulb(tempSpace);
-                            this.lightSpace(tempSpace);
-                            this.LightUpRow(tempSpace.getX(), tempSpace.getY());
-                            this.LightUpColumn(tempSpace.getX(), tempSpace.getY());
+                            this.placeBulb(tempSpace);//place the bulb
+                            this.lightSpace(tempSpace); //move the bulb from available to lit
+                            this.LightUpRow(tempSpace.getX(), tempSpace.getY());//place lit spaces
+                            this.LightUpColumn(tempSpace.getX(), tempSpace.getY());//
                         }
                     }
                 }
