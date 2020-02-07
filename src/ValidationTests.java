@@ -25,7 +25,7 @@
          testList.add(new Space(0,0));
          testList.add(new Space(0,2));
          singleLine = new Board(testBoard, testList, new ArrayList<>());
-         singleLine.LightUpRow(0,0);
+         singleLine.LightUpRow(new Bulb(0,0));
          assertTrue(singleLine.getPosition(0,1) instanceof LitSpace);
      }
 

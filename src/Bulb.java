@@ -6,6 +6,10 @@ public class Bulb extends Space {
         super(x,y);
     }
 
+    public int getConstr(){
+        return 0;
+    }
+
     public String getSpaceType(){
         return "b";
     }
