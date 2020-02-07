@@ -44,7 +44,7 @@
          testList = new ArrayList<>();
          testList.add(new Wall(1,1, '4'));
          singleLine = new Board(testBoard, new ArrayList<Space>(), testList);
-         assertFalse(singleLine.areWallsOverloaded());
+         assertFalse(singleLine.wallsNotOverloaded());
      }
 
 //     @Test
