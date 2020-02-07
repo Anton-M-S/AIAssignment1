@@ -80,7 +80,7 @@ public class Board {
     //checks that all bulbs are not lighting other bulbs, that all walls have correct number of
     //bulbs, and that there are no unlit spaces
     public boolean isBoardValid() {
-        return  this.areBulbsValid() && this.areWallsValid() && this.checkForUnlitSpaces();
+        return this.areBulbsValid() && this.areWallsValid() && this.checkForUnlitSpaces();
     }
 
     //checks to make sure no bulbs are lighting other bulbs
@@ -88,14 +88,16 @@ public class Board {
         boolean valid = true;
         int counter = 0;
         Space currSpace;
+        Bulb newBulb;
         //while no validation errors have been found, and we still have bulbs to check
         while (valid && counter < this.spacesLit.size()) {
             currSpace = spacesLit.get(counter);
             //if the space is not already lit
             if (!(this.getPosition(currSpace.getX(), currSpace.getY()) instanceof LitSpace)) {
+                newBulb = new Bulb(currSpace.getX(), currSpace.getY());
                 this.updatePosition(new Bulb(currSpace.getX(), currSpace.getY()));//change the space to a bulb
-                this.LightUpRow(currSpace.getX(), currSpace.getY());//light up the rows and and columns
-                this.LightUpColumn(currSpace.getX(), currSpace.getY());//associated with the bulb
+                this.LightUpRow(newBulb);//light up the rows and and columns
+                this.LightUpColumn(newBulb);//associated with the bulb
             } else {//otherwise the board is not valid
                 valid = false;
             }
@@ -167,44 +169,48 @@ public class Board {
     }
 
     //after a bulb is placed, lights up the board row that the bulb is on
-    public void LightUpRow(int rowNum, int colNum) {
-            boolean noWall = true;
-            int counter = colNum - 1;
-            //move backwards from teh bulb, towards zero
-            while (noWall && counter >= 0) {//as long as there is not a wall in teh way, and we aren't at the edge of the board
-                noWall = lightUpFromBulb(rowNum, counter);//lights the current spaceeee
+    public void LightUpRow(Bulb b) {
+        boolean noWall = true;
+        int rowNum = b.getX();
+        int colNum = b.getY();
+        int counter = colNum - 1;
+        //move backwards from teh bulb, towards zero
+        while (noWall && counter >= 0) {//as long as there is not a wall in teh way, and we aren't at the edge of the board
+            noWall = lightUpFromBulb(rowNum, counter);//lights the current spaceeee
 
-                counter -= 1;
-            }
-            noWall = true;//reset noWall
-            counter = colNum + 1;
-            //move forwards from teh bulb to the edge of the board
-            while (noWall && counter < this.layout[rowNum].length) {
+            counter -= 1;
+        }
+        noWall = true;//reset noWall
+        counter = colNum + 1;
+        //move forwards from teh bulb to the edge of the board
+        while (noWall && counter < this.layout[rowNum].length) {
 
-                noWall = lightUpFromBulb(rowNum, counter);
+            noWall = lightUpFromBulb(rowNum, counter);
 
-                counter += 1;
-            }
+            counter += 1;
+        }
     }
 
     //after a bulb is placed, lights up the board row that the bulb is on
-    public void LightUpColumn(int rowNum, int colNum) {
-            boolean noWall = true;
-            int counter = rowNum - 1;
+    public void LightUpColumn(Bulb b) {
+        boolean noWall = true;
+        int rowNum = b.getX();
+        int colNum = b.getY();
+        int counter = rowNum - 1;
         //move backwards from teh bulb, towards zero
-            while (noWall && counter >= 0) {
-                noWall = lightUpFromBulb(counter, colNum);
-                counter -= 1;
-            }
-            noWall = true;
-            counter = rowNum + 1;
+        while (noWall && counter >= 0) {
+            noWall = lightUpFromBulb(counter, colNum);
+            counter -= 1;
+        }
+        noWall = true;
+        counter = rowNum + 1;
         //move forwards from teh bulb to the edge of the board
-            while (noWall && counter < this.layout.length) {
+        while (noWall && counter < this.layout.length) {
 
-                noWall = lightUpFromBulb(counter, colNum);
+            noWall = lightUpFromBulb(counter, colNum);
 
-                counter += 1;
-            }
+            counter += 1;
+        }
     }
 
     private boolean lightUpFromBulb(int x, int y) {
@@ -230,7 +236,7 @@ public class Board {
         boolean valid = true;
         int counter = 0;
         int counter2 = 0;
-        while (valid && counter<this.layout.length){
+        while (valid && counter < this.layout.length) {
             while (valid && counter2 < this.layout[counter].length) {
                 if (valid && layout[counter][counter2] instanceof UnlitSpace) {
                     valid = false;
@@ -359,11 +365,11 @@ public class Board {
             currChar = currWall.getWallNum();
 
             if (currChar != 0) {//not a zero wall
-            currX = currWall.getX();
-            currY = currWall.getY();
+                currX = currWall.getX();
+                currY = currWall.getY();
                 bulbsNeeded = countNumBulbsNeeded(currX, currY);//count the number of bulbs that the wall still needs beside it
                 if (bulbsNeeded == currChar && getNumBulbsAroundWall(currWall) != currChar) {
-                    placeBulbsAroundWall(currX,currY);//places bulbs on all available spaces around the wall
+                    placeBulbsAroundWall(currX, currY);//places bulbs on all available spaces around the wall
                     madeChange = true;
                     //checkForWallsNeedingFourBulbs(currX, currY);
                 }
@@ -378,38 +384,37 @@ public class Board {
     private int countNumBulbsNeeded(int currX, int currY) {
         int numUnavailable = 0;//counts the number of spaces that are not unlit or contain a bulb
         for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <=1; j++) {
-                if((i==0 || j==0) && (i!=0 || j!=0)){
+            for (int j = -1; j <= 1; j++) {
+                if ((i == 0 || j == 0) && (i != 0 || j != 0)) {
                     //if the space is within the bounds, and its not unlit or a bulb
-                    if (currX+i>=0 && currX+i<layout.length && currY+j>=0 && currY+j<layout[0].length){
-                        if (!(layout[currX+i][currY+j] instanceof UnlitSpace) && !(layout[currX+i][currY+j] instanceof Bulb)){
+                    if (currX + i >= 0 && currX + i < layout.length && currY + j >= 0 && currY + j < layout[0].length) {
+                        if (!(layout[currX + i][currY + j] instanceof UnlitSpace) && !(layout[currX + i][currY + j] instanceof Bulb)) {
                             numUnavailable++;
                         }
-                    }else {
+                    } else {
                         numUnavailable++;
                     }
                 }
             }
         }
-        return 4-numUnavailable;
+        return 4 - numUnavailable;
     }
-
 
 
     //places bulbs in all empty spaces around a wall
     private void placeBulbsAroundWall(int currX, int currY) {
-        Space tempSpace;
+        Bulb tempSpace;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
                 if (i == 0 || j == 0) {
                     if ((currX + i < layout.length && currX + i >= 0
                             && currY + j < layout[0].length && currY + j >= 0) && !isWall(currX + i, currY + j)) {
                         if (!(layout[currX + i][currY + j] instanceof Bulb) && !(layout[currX + i][currY + j] instanceof LitSpace)) {
-                            tempSpace = new Space(currX + i, currY + j);
+                            tempSpace = new Bulb(currX + i, currY + j);
                             this.placeBulb(tempSpace);//place the bulb
                             this.lightSpace(tempSpace); //move the bulb from available to lit
-                            this.LightUpRow(tempSpace.getX(), tempSpace.getY());//place lit spaces
-                            this.LightUpColumn(tempSpace.getX(), tempSpace.getY());//
+                            this.LightUpRow(tempSpace);//place lit spaces
+                            this.LightUpColumn(tempSpace);//
                         }
                     }
                 }

@@ -57,12 +57,12 @@ public class forward_checking {
                     }
                     System.out.println(board);//call Search functions from this line
                     board.solveGuaranteedBulbs();
-                    System.out.println("BT Start");
+                    System.out.println("FC Start");
                     Board result = ForwardTrackingCP(board,null,false);
                     if (result == null) {
-                        System.out.println("Backtrack failed");
+                        System.out.println("No solution found");
                     } else {
-                        System.out.println("BT passed");
+                        System.out.println("FC passed");
                     }
                     System.out.println("States Examined: "+stateCounter);
                     stateCounter = 0;
