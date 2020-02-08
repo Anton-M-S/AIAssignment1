@@ -1,14 +1,14 @@
 public class PriorityNode {
-    private Bulb bulb;
+    private Space bulb;
     private int priority;
     private PriorityNode next;
 
-    public PriorityNode(Bulb b, int p, PriorityNode n){
+    public PriorityNode(Space b, int p, PriorityNode next){
         this.bulb = b;
         this.priority = p;
-        this.next = n;
+        this.next = next;
     }
-    public Bulb getBulb() {
+    public Space getBulb() {
         return bulb;
     }
 
