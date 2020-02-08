@@ -60,13 +60,45 @@ public class backtrack {
                     System.out.println("BT Start");
                     Board result = BTRecursive(board, null, false);
                     if (result == null) {
-                        System.out.println("Backtrack failed");
+                        System.out.println("No solution found");
                     } else {
                         System.out.println("BT passed");
                     }
-                    System.out.println("States Examined: "+stateCounter);
+                    System.out.println("States Examined: " + stateCounter);
                     stateCounter = 0;
+                    System.out.println("\n H1 Start");
+                    Board H1 = BTRecursiveH1(board, null, false);
+                    //stateCounter = 0;
+                    if (H1 == null) {
+                        System.out.println("H1 Failed");
+                    } else {
+                        System.out.println("H1 Passed");
+                    }
+                    System.out.println("States Examined: " + stateCounter);
+                    stateCounter = 0;
+
+                    System.out.println("\nH2 Start");
+                    Board H2 = BTRecursiveH2(board, null, false);
+                    //stateCounter = 0;
+                    if (H2 == null) {
+                        System.out.println("H2 Failed");
+                    } else {
+                        System.out.println("H2 Passed");
+                    }
+                    System.out.println("States Examined: " + stateCounter);
                     //setWallSpaces(newBoard);
+
+                    stateCounter = 0;
+
+                    System.out.println("\nH3 Start");
+                    Board H3 = BTRecursiveH3(board, null, false);
+                    //stateCounter = 0;
+                    if (H3 == null) {
+                        System.out.println("H3 Failed");
+                    } else {
+                        System.out.println("H3 Passed");
+                    }
+                    System.out.println("States Examined: " + stateCounter);
                     currline = fileScan.nextLine();
                 }
             }
@@ -157,12 +189,28 @@ public class backtrack {
                 if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
                     //tempboard will always be null, unless it is returned a fully valid solution
-                    while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                        tempBoard = BTRecursiveH1(newBoard, availSpaces.get(counter), isPartial);
-                        if (tempBoard == null){
-                            newBoard.spacesAva.remove(counter);
-                            counter--;
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority += newBoard.H1(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = BTRecursiveH1(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.removeAvailableSpace(tempSpace);
+                                //counter--;
+                            }
                         }
                         counter++;
                     }
@@ -204,12 +252,28 @@ public class backtrack {
                 if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
                     //tempboard will always be null, unless it is returned a fully valid solution
-                    while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                        tempBoard = BTRecursiveH2(newBoard, availSpaces.get(counter), isPartial);
-                        if (tempBoard == null){
-                            newBoard.spacesAva.remove(counter);
-                            counter--;
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority += newBoard.H2(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = BTRecursiveH2(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.removeAvailableSpace(tempSpace);
+                                //counter--;
+                            }
                         }
                         counter++;
                     }
@@ -251,12 +315,29 @@ public class backtrack {
                 if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
                     //tempboard will always be null, unless it is returned a fully valid solution
-                    while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                        tempBoard = BTRecursiveH3(newBoard, availSpaces.get(counter), isPartial);
-                        if (tempBoard == null){
-                            newBoard.spacesAva.remove(counter);
-                            counter--;
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority += newBoard.H1(tempSpace);
+                        priority += newBoard.H2(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = BTRecursiveH3(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.removeAvailableSpace(tempSpace);
+                                //counter--;
+                            }
                         }
                         counter++;
                     }

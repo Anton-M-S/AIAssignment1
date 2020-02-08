@@ -344,7 +344,7 @@ public class forward_checking {
                         priority = 0;
                     }
                     counter = 0;
-                    while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
                         temp = heuristicRank.pop();
                         if (temp != null) {
                             tempSpace = temp.getBulb();
