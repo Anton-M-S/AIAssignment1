@@ -23,4 +23,8 @@ public class PriorityNode {
     public void setNext(PriorityNode next) {
         this.next = next;
     }
+
+    public String toString(){
+        return priority + ", ";
+    }
 }

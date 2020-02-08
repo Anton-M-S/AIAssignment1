@@ -243,6 +243,7 @@ public class Board {
                 }
                 counter2++;
             }
+            counter2 = 0;
             counter++;
         }
 //        for (int i = 0; i < layout.length; i++) {
@@ -434,7 +435,7 @@ public class Board {
         int constraining = 0;
         constraining+=this.countColumToWall(s);
         constraining+=this.countRowToWall(s);
-        return constraining;
+        return 0;
     }
 
     public int countColumToWall(Space b){

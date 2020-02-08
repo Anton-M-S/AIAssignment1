@@ -13,12 +13,10 @@ public class PriorityQueue {
         PriorityNode prev = null;
         if (top == null){
             top = new PriorityNode(b, heurVal, null);
-            length++;
         }else {
             if (heurVal > top.getPriority()) {
                 newNode = new PriorityNode(b, heurVal, top);
                 top = newNode;
-                length++;
             } else {
                 while (currNode != null && currNode.getPriority() >= heurVal) {
                     prev = currNode;
@@ -27,10 +25,10 @@ public class PriorityQueue {
                 if (prev != null) {
                     newNode = new PriorityNode(b, heurVal, currNode);
                     prev.setNext(newNode);
-                    length++;
                 }
             }
         }
+        length++;
     }
 
     public int getLength() {
@@ -51,7 +49,14 @@ public class PriorityQueue {
     }
 
     public String toString(){
-        return "Size: "+length;
+        String toReturn = "";
+        PriorityNode curNode = top;
+        while (curNode != null) {
+            toReturn+=curNode.toString();
+            curNode = curNode.getNext();
+        }
+        return "Size: "+length+"---"+toReturn;
+
     }
 }
 
