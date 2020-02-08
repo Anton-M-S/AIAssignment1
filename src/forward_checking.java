@@ -59,18 +59,21 @@ public class forward_checking {
                     System.out.println(board);//call Search functions from this line
                     board.solveGuaranteedBulbs();
                     System.out.println("FC Start");
-                    Board result = ForwardTrackingCP(board, null, false, 0);
+                    Board result = ForwardTrackingCP(board, null, false);
                     if (result == null) {
                         System.out.println("No solution found");
                     } else {
                         System.out.println("FC passed");
                     }
                     System.out.println("States Examined: " + stateCounter);
-
-                    System.out.println("\nSolving With H2:");
                     stateCounter = 0;
+                    //System.out.println("States Examined: " + stateCounter);
+                    //System.out.println("\nSolving With H2:");
 
-                    Board H2 = ForwardTrackingCP(board, null, false,2);
+                    Board H2 = ForwardTrackingCPH2(board, null, false);
+
+
+                    //stateCounter = 0;
                     if (H2 == null) {
                         System.out.println("H2 Failed");
                     } else {
@@ -89,7 +92,7 @@ public class forward_checking {
     }
 
 
-    private static Board ForwardTrackingCP(Board board, Space nextBulb, boolean isPartial, int heuristic) {
+    private static Board ForwardTrackingCP(Board board, Space nextBulb, boolean isPartial) {
         //  System.out.println(i++);
         stateCounter++;
         Board newBoard = new Board(board);
@@ -112,7 +115,7 @@ public class forward_checking {
             if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
                 // System.out.println(newBoard);
                 newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
-                Board partialSol = ForwardTrackingCP(newBoard, null, true, heuristic);
+                Board partialSol = ForwardTrackingCP(newBoard, null, true);
                 if (partialSol != null) {//if the solution found on the previous line was valid, return it
                     //this works because the only place that returns anything other than null is if there is
                     //a complete solution
@@ -124,53 +127,13 @@ public class forward_checking {
                     ArrayList<Space> availSpaces = newBoard.spacesAva;
                     int counter = 0;
                     //tempboard will always be null, unless it is returned a fully valid solution
-                    if (heuristic == 0) {
-                        while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
-                            tempBoard = ForwardTrackingCP(newBoard, availSpaces.get(counter), isPartial, heuristic);
-                            if (tempBoard == null) {
-                                newBoard.spacesAva.remove(counter);
-                                counter--;
-                            }
-                            counter++;
+                    while (tempBoard == null && counter < newBoard.spacesAva.size() && newBoard.spacesAva.size() > 0) {
+                        tempBoard = ForwardTrackingCP(newBoard, availSpaces.get(counter), isPartial);
+                        if (tempBoard == null) {
+                            newBoard.spacesAva.remove(counter);
+                            counter--;
                         }
-                    }else {
-                        PriorityQueue heuristicRank = new PriorityQueue();
-                        int priority = 0;
-                        PriorityNode temp;
-                        Space tempSpace;
-                        while (counter < newBoard.spacesAva.size()) {
-                            tempSpace = availSpaces.get(counter);
-                            switch (heuristic){
-                                case 3:
-                                    priority+=newBoard.calculateH2(tempSpace);
-                                    //add H1 too
-                                    break;
-                                case 2:
-                                    priority+=newBoard.calculateH2(tempSpace);
-                                    break;
-                                case 1:
-                                    //put it here
-                                    break;
-                            }
-                           // priority += newBoard.calculateH2(tempSpace);
-                            heuristicRank.add(tempSpace, priority);
-                            counter++;
-                            priority = 0;
-                        }
-                        counter = 0;
-                        while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
-                            temp = heuristicRank.pop();
-                            //if (temp != null) {
-                                tempSpace = temp.getBulb();
-                                tempBoard = ForwardTrackingCP(newBoard, tempSpace, isPartial, heuristic);
-                                if (tempBoard == null) {
-                                    newBoard.spacesAva.remove(counter);
-                                    counter--;
-                                }
-                          //  }
-                            counter++;
-                        }
-
+                        counter++;
                     }
                 }
             }
@@ -178,70 +141,159 @@ public class forward_checking {
         return tempBoard;
     }
 
-//    private static Board ForwardTrackingCPH2(Board board, Space nextBulb, boolean isPartial) {
-//        //  System.out.println(i++);
-//        stateCounter++;
-//        Board newBoard = new Board(board);
-//        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
-//            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
-//            newBoard.lightSpace(nextBulb);//
-//            boolean didChange = true;
-//            while (didChange) {
-//                didChange = newBoard.solveGuaranteedBulbs();
-//                newBoard.updateAvailableSpaces();//remove invalid spaces from available
-//            }
-//        }
-//
-//        Board tempBoard = null;
-//
-//        if (newBoard.isBoardValid()) {//if it is a fully valid board
-//            System.out.println(newBoard);
-//            return newBoard;//return it
-//        } else {
-//            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
-//                // System.out.println(newBoard);
-//                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
-//                Board partialSol = ForwardTrackingCPH2(newBoard, null, true);
-//                if (partialSol != null) {//if the solution found on the previous line was valid, return it
-//                    //this works because the only place that returns anything other than null is if there is
-//                    //a complete solution
-//                    return partialSol;
-//                }
-//            } else {
-//                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
-//                if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
-//                    ArrayList<Space> availSpaces = newBoard.spacesAva;
-//                    int counter = 0;
-//                    PriorityQueue heuristicRank = new PriorityQueue();
-//                    int priority = 0;
-//                    PriorityNode temp;
-//                    Space tempSpace;
-//                    //tempboard will always be null, unless it is returned a fully valid solution
-//                    while (counter < newBoard.spacesAva.size()) {
-//                        tempSpace = availSpaces.get(counter);
-//                        priority += newBoard.calculateH2(tempSpace);
-//                        heuristicRank.add(tempSpace, priority);
-//                        counter++;
-//                        priority = 0;
-//                    }
-//                    counter = 0;
-//                    while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
-//                        temp = heuristicRank.pop();
-//                        if (temp != null) {
-//                            tempSpace = temp.getBulb();
-//                            tempBoard = ForwardTrackingCPH2(newBoard, tempSpace, isPartial);
-//                            if (tempBoard == null) {
-//                                newBoard.spacesAva.remove(counter);
-//                                counter--;
-//                            }
-//                        }
-//                        counter++;
-//                    }
-//                }
-//            }
-//        }
-//        return tempBoard;
-//    }
+    private static Board ForwardTrackingCPH2(Board board, Space nextBulb, boolean isPartial) {
+        //  System.out.println(i++);
+        stateCounter++;
+        Board newBoard = new Board(board);
+        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
+            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.lightSpace(nextBulb);//
+            boolean didChange = true;
+            while (didChange) {
+                didChange = newBoard.solveGuaranteedBulbs();
+                newBoard.updateAvailableSpaces();//remove invalid spaces from available
+            }
+        }
+
+        Board tempBoard = null;
+
+        if (newBoard.isBoardValid()) {//if it is a fully valid board
+            System.out.println(newBoard);
+            return newBoard;//return it
+        } else {
+            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
+                // System.out.println(newBoard);
+                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
+                Board partialSol = ForwardTrackingCPH2(newBoard, null, true);
+                if (partialSol != null) {//if the solution found on the previous line was valid, return it
+                    //this works because the only place that returns anything other than null is if there is
+                    //a complete solution
+                    return partialSol;
+                }
+            } else {
+                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
+                if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
+                    ArrayList<Space> availSpaces = newBoard.spacesAva;
+                    int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
+                    //tempboard will always be null, unless it is returned a fully valid solution
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority += newBoard.H2(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = ForwardTrackingCPH2(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.removeAvailableSpace(tempSpace);
+                                //counter--;
+                            }
+                        }
+                        counter++;
+                    }
+                }
+            }
+        }
+        return tempBoard;
+    }
+
+
+
+
+    private static Board ForwardTrackingCPH1(Board board, Space nextBulb, boolean isPartial) {
+        //  System.out.println(i++);
+        stateCounter++;
+        Board newBoard = new Board(board);
+        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
+            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.lightSpace(nextBulb);//
+            boolean didChange = true;
+            while (didChange) {
+                didChange = newBoard.solveGuaranteedBulbs();
+                newBoard.updateAvailableSpaces();//remove invalid spaces from available
+            }
+        }
+
+        Board tempBoard = null;
+
+        if (newBoard.isBoardValid()) {//if it is a fully valid board
+            System.out.println(newBoard);
+            return newBoard;//return it
+        } else {
+            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
+                // System.out.println(newBoard);
+                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
+                Board partialSol = ForwardTrackingCPH1(newBoard, null, true);
+                if (partialSol != null) {//if the solution found on the previous line was valid, return it
+                    //this works because the only place that returns anything other than null is if there is
+                    //a complete solution
+                    return partialSol;
+                }
+            } else {
+                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
+                if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
+                    ArrayList<Space> availSpaces = newBoard.spacesAva;
+                    int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
+                    //tempboard will always be null, unless it is returned a fully valid solution
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority = newBoard.H1(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = ForwardTrackingCPH1(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.spacesAva.remove(counter);
+                                counter--;
+                            }
+                        }
+                        counter++;
+                    }
+                }
+            }
+        }
+        return tempBoard;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     private static ArrayList<Space> setWallSpaces(Space[][] layout) {

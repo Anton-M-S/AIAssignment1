@@ -243,7 +243,7 @@ public class Board {
                 }
                 counter2++;
             }
-            counter2 = 0;
+            counter2=0;
             counter++;
         }
 //        for (int i = 0; i < layout.length; i++) {
@@ -293,7 +293,7 @@ public class Board {
     }
 
     //removes a space from spaces available
-    private void removeAvailableSpace(Space s) {
+    public void removeAvailableSpace(Space s) {
         boolean found = false;
         int counter = 0;
         while (!found && counter < spacesAva.size()) {
@@ -435,7 +435,7 @@ public class Board {
         int constraining = 0;
         constraining+=this.countColumToWall(s);
         constraining+=this.countRowToWall(s);
-        return 0;
+        return constraining;
     }
 
     public int countColumToWall(Space b){
@@ -496,5 +496,63 @@ public class Board {
             counter += 1;
         }
         return numspaces;
+    }
+
+    public int H1(Space inSpace){
+
+        int x = inSpace.getX();
+        int y = inSpace.getY();
+        int total = 0;
+
+        if(x-1 >= 0 && layout[x-1][y] instanceof Wall){
+            total += ((Wall)layout[x-1][y]).getWallNum();
+        }
+
+        if(x+1 < layout.length && layout[x+1][y]instanceof Wall){
+            total += ((Wall)layout[x+1][y]).getWallNum();
+        }
+
+        if(y-1 >= 0 && layout[x][y-1] instanceof Wall){
+            total += ((Wall)layout[x][y-1]).getWallNum();
+        }
+
+        if(y+1 < layout.length && layout[x][y+1] instanceof Wall){
+            total += ((Wall)layout[x][y+1]).getWallNum();
+        }
+
+        return total;
+    }
+
+    public int H2(Space inSpace){
+
+        int x = inSpace.getX();
+        int y = inSpace.getY();
+        int total = 0;
+
+        int counter = 1;
+
+        while(x-counter >= 0 && !(layout[x-counter][y] instanceof Wall)){
+            total ++;
+            counter++;
+        }
+        counter = 1;
+
+        while(x+counter < layout.length && !(layout[x+counter][y] instanceof Wall)){
+            total ++;
+            counter++;
+        }
+        counter = 1;
+
+        while(y-counter >= 0 && !(layout[x][y-counter] instanceof Wall)){
+            total ++;
+            counter++;
+        }
+        counter = 1;
+        while(y+counter < layout.length && !(layout[x][y+counter] instanceof Wall)){
+            total ++;
+            counter++;
+        }
+
+        return total;
     }
 }
