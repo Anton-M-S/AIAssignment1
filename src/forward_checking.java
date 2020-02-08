@@ -70,7 +70,7 @@ public class forward_checking {
                     //System.out.println("States Examined: " + stateCounter);
                     //System.out.println("\nSolving With H2:");
 
-                    Board H2 = ForwardTrackingCPH2(board, null, false);
+                    Board H2 = ForwardTrackingCPH3(board, null, false);
 
 
                     //stateCounter = 0;
@@ -277,14 +277,71 @@ public class forward_checking {
 
 
 
+    private static Board ForwardTrackingCPH3(Board board, Space nextBulb, boolean isPartial) {
+        //  System.out.println(i++);
+        stateCounter++;
+        Board newBoard = new Board(board);
+        if (nextBulb != null) {//if not the start, or the first iteration after a partial solution was found
+            newBoard.placeBulb(nextBulb);//place the next bulb on teh board
+            newBoard.lightSpace(nextBulb);//
+            boolean didChange = true;
+            while (didChange) {
+                didChange = newBoard.solveGuaranteedBulbs();
+                newBoard.updateAvailableSpaces();//remove invalid spaces from available
+            }
+        }
 
+        Board tempBoard = null;
 
-
-
-
-
-
-
+        if (newBoard.isBoardValid()) {//if it is a fully valid board
+            System.out.println(newBoard);
+            return newBoard;//return it
+        } else {
+            if (!isPartial && newBoard.validatePartialSolution()) {//if a partial solution
+                // System.out.println(newBoard);
+                newBoard.setAvailableSpacesToAllBlanks();//switch spacesAva to a list of all '_' spaces
+                Board partialSol = ForwardTrackingCPH3(newBoard, null, true);
+                if (partialSol != null) {//if the solution found on the previous line was valid, return it
+                    //this works because the only place that returns anything other than null is if there is
+                    //a complete solution
+                    return partialSol;
+                }
+            } else {
+                //if the board as it stands has no bulbs that light bulbs, or walls with too many bulbs
+                if (newBoard.areBulbsValid() && newBoard.wallsNotOverloaded()) {
+                    ArrayList<Space> availSpaces = newBoard.spacesAva;
+                    int counter = 0;
+                    PriorityQueue heuristicRank = new PriorityQueue();
+                    int priority = 0;
+                    PriorityNode temp;
+                    Space tempSpace;
+                    //tempboard will always be null, unless it is returned a fully valid solution
+                    while (counter < newBoard.spacesAva.size()) {
+                        tempSpace = availSpaces.get(counter);
+                        priority += newBoard.H1(tempSpace);
+                        priority += newBoard.calculateH2(tempSpace);
+                        heuristicRank.add(tempSpace, priority);
+                        counter++;
+                        priority = 0;
+                    }
+                    counter = 0;
+                    while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
+                        temp = heuristicRank.pop();
+                        if (temp != null) {
+                            tempSpace = temp.getBulb();
+                            tempBoard = ForwardTrackingCPH3(newBoard, tempSpace, isPartial);
+                            if (tempBoard == null) {
+                                newBoard.spacesAva.remove(counter);
+                                counter--;
+                            }
+                        }
+                        counter++;
+                    }
+                }
+            }
+        }
+        return tempBoard;
+    }
 
 
 
