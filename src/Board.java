@@ -430,4 +430,29 @@ public class Board {
         return isWall;
     }
 
+    public int H2(Space inSpace){
+
+        int x = inSpace.getX();
+        int y = inSpace.getY();
+        int total = 0;
+
+        if(x-1 >= 0 && layout[x-1][y].getSpaceType()=="W"){
+            total += ((Wall)layout[x-1][y]).getWallNum();
+        }
+
+        if(x+1 < layout.length && layout[x+1][y].getSpaceType()=="W"){
+            total += ((Wall)layout[x+1][y]).getWallNum();
+        }
+
+        if(y >= 0 && layout[x+1][y].getSpaceType()=="W"){
+            total += ((Wall)layout[x][y-1]).getWallNum();
+        }
+
+        if(x+1 < layout.length && layout[x][y].getSpaceType()=="W"){
+            total += ((Wall)layout[x][y-1]).getWallNum();
+        }
+
+        return total;
+    }
+
 }
