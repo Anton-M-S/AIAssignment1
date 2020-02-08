@@ -430,4 +430,70 @@ public class Board {
         return isWall;
     }
 
+    public int calculateH2(Space s){
+        int constraining = 0;
+        constraining+=this.countColumToWall(s);
+        constraining+=this.countRowToWall(s);
+        return constraining;
+    }
+
+    public int countColumToWall(Space b){
+        boolean noWall = true;
+        int rowNum = b.getX();
+        int colNum = b.getY();
+        int numspaces = 0;
+        int counter = rowNum - 1;
+        //move backwards from teh bulb, towards zero
+        while (noWall && counter >= 0) {
+            if (this.isWall(counter,colNum)){
+                noWall = false;
+            }else {
+                numspaces++;
+            }
+            counter -= 1;
+        }
+        noWall = true;
+        counter = rowNum + 1;
+        //move forwards from teh bulb to the edge of the board
+        while (noWall && counter < this.layout[rowNum].length) {
+
+            if (this.isWall(counter,colNum)){
+                noWall = false;
+            }else {
+                numspaces++;
+            }
+            counter += 1;
+        }
+        return numspaces;
+    }
+
+    public int countRowToWall(Space b){
+        boolean noWall = true;
+        int rowNum = b.getX();
+        int colNum = b.getY();
+        int numspaces = 0;
+        int counter = colNum - 1;
+        //move backwards from teh bulb, towards zero
+        while (noWall && counter >= 0) {//as long as there is not a wall in teh way, and we aren't at the edge of the board
+            if (this.isWall(rowNum,counter)){
+                noWall = false;
+            }else {
+                numspaces++;
+            }
+            counter -= 1;
+        }
+        noWall = true;//reset noWall
+        counter = colNum + 1;
+        //move forwards from teh bulb to the edge of the board
+        while (noWall && counter < this.layout.length) {
+
+            if (this.isWall(rowNum,counter)){
+                noWall = false;
+            }else {
+                numspaces++;
+            }
+            counter += 1;
+        }
+        return numspaces;
+    }
 }

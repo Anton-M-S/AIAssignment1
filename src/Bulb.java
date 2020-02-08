@@ -1,14 +1,11 @@
 public class Bulb extends Space {
 
-    public static final char SPACE_TYPE = 'b';
-
+    public int constraining;
     public Bulb(int x, int y){
         super(x,y);
+        constraining = 0;
     }
 
-    public int getConstr(){
-        return 0;
-    }
 
     public String getSpaceType(){
         return "b";
