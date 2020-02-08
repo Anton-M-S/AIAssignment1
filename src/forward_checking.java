@@ -67,12 +67,19 @@ public class forward_checking {
                     }
                     System.out.println("States Examined: " + stateCounter);
                     stateCounter = 0;
-                    //System.out.println("States Examined: " + stateCounter);
-                    //System.out.println("\nSolving With H2:");
+                    System.out.println("\n H1 Start");
+                    Board H1 = ForwardTrackingCPH1(board, null, false);
+                    //stateCounter = 0;
+                    if (H1 == null) {
+                        System.out.println("H1 Failed");
+                    } else {
+                        System.out.println("H1 Passed");
+                    }
+                    System.out.println("States Examined: " + stateCounter);
+                    stateCounter = 0;
 
-                    Board H2 = ForwardTrackingCPH3(board, null, false);
-
-
+                    System.out.println("\nH2 Start");
+                    Board H2 = ForwardTrackingCPH2(board, null, false);
                     //stateCounter = 0;
                     if (H2 == null) {
                         System.out.println("H2 Failed");
@@ -81,6 +88,18 @@ public class forward_checking {
                     }
                     System.out.println("States Examined: " + stateCounter);
                     //setWallSpaces(newBoard);
+
+                    stateCounter = 0;
+
+                    System.out.println("\nH3 Start");
+                    Board H3 = ForwardTrackingCPH3(board, null, false);
+                    //stateCounter = 0;
+                    if (H3 == null) {
+                        System.out.println("H3 Failed");
+                    } else {
+                        System.out.println("H3 Passed");
+                    }
+                    System.out.println("States Examined: " + stateCounter);
                     currline = fileScan.nextLine();
                 }
             }
@@ -250,20 +269,20 @@ public class forward_checking {
                     //tempboard will always be null, unless it is returned a fully valid solution
                     while (counter < newBoard.spacesAva.size()) {
                         tempSpace = availSpaces.get(counter);
-                        priority = newBoard.H1(tempSpace);
+                        priority += newBoard.H1(tempSpace);
                         heuristicRank.add(tempSpace, priority);
                         counter++;
                         priority = 0;
                     }
                     counter = 0;
-                    while (tempBoard == null && counter < heuristicRank.getLength() && heuristicRank.getLength() > 0) {
+                    while (tempBoard == null && heuristicRank.getLength() > 0) {
                         temp = heuristicRank.pop();
                         if (temp != null) {
                             tempSpace = temp.getBulb();
                             tempBoard = ForwardTrackingCPH1(newBoard, tempSpace, isPartial);
                             if (tempBoard == null) {
-                                newBoard.spacesAva.remove(counter);
-                                counter--;
+                                newBoard.removeAvailableSpace(tempSpace);
+                                //counter--;
                             }
                         }
                         counter++;
@@ -319,7 +338,7 @@ public class forward_checking {
                     while (counter < newBoard.spacesAva.size()) {
                         tempSpace = availSpaces.get(counter);
                         priority += newBoard.H1(tempSpace);
-                        priority += newBoard.calculateH2(tempSpace);
+                        priority += newBoard.H2(tempSpace);//weight results
                         heuristicRank.add(tempSpace, priority);
                         counter++;
                         priority = 0;
@@ -331,7 +350,7 @@ public class forward_checking {
                             tempSpace = temp.getBulb();
                             tempBoard = ForwardTrackingCPH3(newBoard, tempSpace, isPartial);
                             if (tempBoard == null) {
-                                newBoard.spacesAva.remove(counter);
+                                newBoard.removeAvailableSpace(tempSpace);
                                 counter--;
                             }
                         }
