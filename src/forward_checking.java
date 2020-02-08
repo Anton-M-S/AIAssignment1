@@ -351,7 +351,7 @@ public class forward_checking {
                             tempBoard = ForwardTrackingCPH3(newBoard, tempSpace, isPartial);
                             if (tempBoard == null) {
                                 newBoard.removeAvailableSpace(tempSpace);
-                                counter--;
+                                //counter--;
                             }
                         }
                         counter++;
